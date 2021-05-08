@@ -68,9 +68,6 @@ func planAction(c *cli.Context, opts *globalOptions) error {
 		return err
 	}
 
-	rb, _ := yaml.Marshal(repoCommit)
-	fmt.Printf("commit:\n---\n%s\n", string(rb))
-
 	commit := NewCommit(repo, ref, repoCommit)
 	osInfo, err := NewOSInfo()
 	if err != nil {
