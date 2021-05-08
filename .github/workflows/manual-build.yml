@@ -61,7 +61,7 @@ jobs:
       - name: Install dependencies
         if: steps.check.outcome == 'failure'
         run: >-
-          brew bundle
+          brew bundle --file=builder/Brewfile
       - name: Download and build Emacs
         if: steps.check.outcome == 'failure'
         run: >-
