@@ -10,7 +10,7 @@ on:
       prerelease:
         Description: "Mark release as pre-release?"
         required: true
-        default: "true"
+        default: "false"
       extraPlanArgs:
         Description: "Extra plan args"
         required: false
