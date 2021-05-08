@@ -38,7 +38,7 @@ jobs:
           go-version: 1.16
       - name: Compile emacs-builds release tool (github-release)
         run: >-
-          go build -o ./releaser/github-release ./cmd/github-release
+          go build -o ./github-release ./cmd/github-release
         working-directory: releaser
       - name: Create plan.yml
         run: >-
