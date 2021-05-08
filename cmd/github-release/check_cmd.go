@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"path/filepath"
 
 	"github.com/urfave/cli/v2"
 )
@@ -42,7 +43,7 @@ func checkAction(c *cli.Context, opts *globalOptions) error {
 
 	fmt.Println("    -> Release exists")
 
-	filename := plan.ReleaseAsset()
+	filename := filepath.Base(plan.Archive)
 
 	fmt.Printf("==> Checking release for asset: %s\n", filename)
 	for _, a := range release.Assets {

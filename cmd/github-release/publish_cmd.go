@@ -1,9 +1,12 @@
 package main
 
 import (
+	"crypto/sha256"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/google/go-github/v35/github"
 	"github.com/urfave/cli/v2"
@@ -43,13 +46,23 @@ func publishAction(c *cli.Context, opts *globalOptions) error {
 	releaseSHA := c.String("release-sha")
 	prerelease := c.Bool("prerelease")
 
-	assetFile, err := os.Open(plan.Archive)
-	if err != nil {
-		return err
-	}
-	assetInfo, err := assetFile.Stat()
-	if err != nil {
-		return err
+	assetBaseName := filepath.Base(plan.Archive)
+	assetSumFile := plan.Archive + ".sha256"
+
+	if _, err := os.Stat(assetSumFile); os.IsNotExist(err) {
+		fmt.Printf("==> Generating SHA256 sum for %s\n", assetBaseName)
+		assetSum, err := fileSHA256(plan.Archive)
+		if err != nil {
+			return err
+		}
+
+		content := fmt.Sprintf("%s  %s", assetSum, assetBaseName)
+		err = os.WriteFile(assetSumFile, []byte(content), 0666)
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("    -> Done: %s\n", assetSum)
 	}
 
 	fmt.Printf("==> Checking release %s\n", plan.Release)
@@ -87,23 +100,54 @@ func publishAction(c *cli.Context, opts *globalOptions) error {
 		}
 	}
 
-	assetFilename := plan.ReleaseAsset()
-	assetExists := false
+	assetFiles := []string{plan.Archive, assetSumFile}
 
-	fmt.Printf("==> Checking asset %s\n", assetFilename)
+	for _, fileName := range assetFiles {
+		fileIO, err := os.Open(fileName)
+		if err != nil {
+			return err
+		}
+		defer fileIO.Close()
 
-	for _, a := range release.Assets {
-		if a.GetName() != assetFilename {
-			continue
+		fileInfo, err := fileIO.Stat()
+		if err != nil {
+			return err
 		}
 
-		if a.GetSize() == int(assetInfo.Size()) {
-			fmt.Println("    -> Asset already exists")
-			assetExists = true
-		} else {
-			fmt.Println("    -> Asset exists with wrong file size, deleting...")
-			_, err := gh.Repositories.DeleteReleaseAsset(
-				c.Context, repo.Owner, repo.Name, a.GetID(),
+		fileBaseName := filepath.Base(fileName)
+		assetExists := false
+
+		fmt.Printf("==> Checking asset %s\n", fileBaseName)
+
+		for _, a := range release.Assets {
+			if a.GetName() != fileBaseName {
+				continue
+			}
+
+			if a.GetSize() == int(fileInfo.Size()) {
+				fmt.Println("    -> Asset already exists")
+				assetExists = true
+			} else {
+				fmt.Println(
+					"    -> Asset exists with wrong file size, deleting...",
+				)
+				_, err := gh.Repositories.DeleteReleaseAsset(
+					c.Context, repo.Owner, repo.Name, a.GetID(),
+				)
+				if err != nil {
+					return err
+				}
+				fmt.Println("       -> Done")
+			}
+
+		}
+
+		if !assetExists {
+			fmt.Println("    -> Asset missing, uploading...")
+			_, _, err = gh.Repositories.UploadReleaseAsset(
+				c.Context, repo.Owner, repo.Name, release.GetID(),
+				&github.UploadOptions{Name: fileBaseName},
+				fileIO,
 			)
 			if err != nil {
 				return err
@@ -113,20 +157,22 @@ func publishAction(c *cli.Context, opts *globalOptions) error {
 
 	}
 
-	if !assetExists {
-		fmt.Println("    -> Asset missing, uploading...")
-		_, _, err = gh.Repositories.UploadReleaseAsset(
-			c.Context, repo.Owner, repo.Name, release.GetID(),
-			&github.UploadOptions{Name: assetFilename},
-			assetFile,
-		)
-		if err != nil {
-			return err
-		}
-		fmt.Println("       -> Done")
-	}
-
 	fmt.Printf("==> Release available at: %s\n", release.GetHTMLURL())
 
 	return nil
+}
+
+func fileSHA256(filename string) (string, error) {
+	f, err := os.Open(filename)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	h := sha256.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%x", h.Sum(nil)), nil
 }

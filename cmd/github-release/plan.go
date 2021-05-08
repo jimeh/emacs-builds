@@ -2,7 +2,6 @@ package main
 
 import (
 	"os"
-	"path/filepath"
 
 	"gopkg.in/yaml.v3"
 )
@@ -24,8 +23,4 @@ func LoadPlan(filename string) (*Plan, error) {
 	err = yaml.Unmarshal(b, plan)
 
 	return plan, err
-}
-
-func (s *Plan) ReleaseAsset() string {
-	return filepath.Base(s.Archive)
 }
