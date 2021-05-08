@@ -1,0 +1,76 @@
+---
+name: Build
+on:
+  workflow_dispatch:
+    inputs:
+      gitRef:
+        description: "Emacs git ref to build"
+        required: true
+        default: "master"
+      prerelease:
+        Description: "Mark release as pre-release?"
+        required: true
+        default: "true"
+      extraPlanArgs:
+        Description: "Extra plan args"
+        required: false
+        default: ""
+
+jobs:
+  build-and-publish:
+    runs-on: macos-10.15
+    steps:
+      - name: Checkout emacs-builds repo
+        uses: actions/checkout@v2
+        with:
+          path: releaser
+      - name: Checkout build-emacs-for-macos repo
+        uses: actions/checkout@v2
+        with:
+          repository: jimeh/build-emacs-for-macos
+          path: builder
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+      - name: Compile emacs-builds release tool (github-release)
+        run: >-
+          go build -o ./releaser/github-release ./cmd/github-release
+        working-directory: releaser
+      - name: Create plan.yml
+        run: >-
+          ./releaser/github-release --plan plan.yml plan
+          --work-dir '${{ github.workspace }}'
+          ${{ github.event.inputs.extraPlanArgs }}
+          ${{ github.event.inputs.gitRef }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Show plan.yml
+        run: >-
+          cat plan.yml
+      - name: Check if release and asset already exist for given plan
+        id: check
+        continue-on-error: true
+        run: >-
+          ./releaser/github-release --plan plan.yml check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install dependencies
+        if: steps.check.outcome == 'failure'
+        run: >-
+          brew bundle
+      - name: Download and build Emacs
+        if: steps.check.outcome == 'failure'
+        run: >-
+          ./builder/build-emacs-for-macos --plan=plan.yml
+          --work-dir '${{ github.workspace }}'
+          --native-full-aot
+      - name: Publish release
+        if: steps.check.outcome == 'failure'
+        run: >-
+          ./releaser/github-release --plan plan.yml publish
+          --prerelease=${{ github.event.inputs.prerelease }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
