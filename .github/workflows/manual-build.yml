@@ -1,6 +1,8 @@
 ---
 name: Build
 on:
+  schedule:
+    - cron: "0 21 * * *"
   workflow_dispatch:
     inputs:
       gitRef:
