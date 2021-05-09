@@ -1,6 +1,12 @@
-# Emacs Builds
+<p align="center">
+  <img width="192px" src="https://github.com/emacs-mirror/emacs/raw/emacs-27.2/etc/images/icons/hicolor/scalable/apps/emacs.svg" alt="Logo">
+</p>
 
-<p>
+<h1 align="center">
+  Emacs Builds
+</h1>
+
+<p align="center">
   <a href="https://github.com/jimeh/emacs-builds/releases">
     <img src="https://img.shields.io/github/v/tag/jimeh/emacs-builds?label=nightly" alt="GitHub tag (latest SemVer)">
   </a>
@@ -13,8 +19,12 @@ alt="GitHub issues">
   </a>
 </p>
 
-Nightly binary builds of Emacs for macOS, with native-compilation enabled, as a
-completely self-contained Emacs.app application bundle.
+<p align="center">
+  <strong>
+    Nightly binary builds of Emacs for macOS, with native-compilation enabled, as a
+    self-contained Emacs.app.
+  </strong>
+</p>
 
 ## Features
 
@@ -24,10 +34,10 @@ completely self-contained Emacs.app application bundle.
   other dependencies.
 - Includes the [fix-window-role][] and [system-appearance][] patches from the
   excellent [emacs-plus][] project.
-- Build are creation is transparent and public through the use of GitHub
-  Actions, allowing anyone to inspect git commit SHAs, full source code, and
-  exact commands used to produce a build. This is especially important right now
-  as builds are not yet signed and notarized.
+- Build creation is transparent and public through the use of GitHub Actions,
+  allowing anyone to inspect git commit SHAs, full source code, and exact
+  commands used to produce a build. This is especially important right now as
+  builds are not yet signed and notarized.
 
 [fix-window-role]:
   https://github.com/d12frosted/homebrew-emacs-plus/blob/master/patches/emacs-28/fix-window-role.patch
@@ -60,14 +70,13 @@ the last nightly build.
 ## Untrusted Application
 
 Currently builds are not signed or notarized, meaning macOS cannot verify
-Emacs.app came from a trusted developer, and by default you are not even given
-the option to trust the app and open it anyway.
+Emacs.app came from a trusted developer, and by default you are not given and
+option to trust the app and open it.
 
-Simplest way around this: Instead of double-clicking on Emacs.app in Finder,
-right-click (or control-click) on Emacs and select "Open". You will then be
-given the same warning as before, with a "Open" button now available to open the
-app anyway. After that you can open the application like normal without any
-warnings.
+Simplest way around this is to right-click (or control-click) on the Emacs app
+in Finder and select "Open". You will then be given the same warning as before,
+but with a "Open" button now available to trust and open the app. After that you
+can open the application like normal without any warnings.
 
 ## To-Do
 
