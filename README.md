@@ -84,13 +84,8 @@ in Finder and select "Open". You will then be given the same warning as before,
 but with a "Open" button now available to trust and open the app. After that you
 can open the application like normal without any warnings.
 
-## To-Do
+## Issues / To-Do
 
-- [ ] Sign and notarize builds.
-- [ ] Builds for stable versions of Emacs.
-- [ ] Populate GitHub Release description with relevant info about the build,
-      including a link to the GitHub Actions workflow run that produced the
-      build.
-- [ ] (Eventually) support Apple Silicon mac builds when native-compilation
-      actually works on Apple Silicon.
-- [ ] (Eventually) support builds for Linux.
+Please see [Issues][] for details of things to come, or to report issues.
+
+[issues]: https://github.com/jimeh/emacs-builds/issues
