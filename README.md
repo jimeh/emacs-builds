@@ -50,7 +50,7 @@ executed within a GitHub Actions workflow. Full build history is available
 [jimeh/build-emacs-for-macos]: https://github.com/jimeh/build-emacs-for-macos
 [actions]: https://github.com/jimeh/emacs-builds/actions
 
-Nightly builds are scheduled for 2:35 UTC every night, based on the latest
+Nightly builds are scheduled for 0:30 UTC every night, based on the latest
 commit from the `master` branch of the [emacs-mirror/emacs][] repository. This
 means a nightly build will only be produced if there have been new commits since
 the last nightly build.
