@@ -16,7 +16,7 @@ alt="GitHub issues">
 Nightly binary builds of Emacs for macOS, with native-compilation enabled, as a
 completely self-contained Emacs.app application bundle.
 
-# Features
+## Features
 
 - Self-contained Emacs.app application, with no external dependencies.
 - Native-compilation is enabled in nightly builds from the `master` branch of
@@ -50,10 +50,10 @@ executed within a GitHub Actions workflow. Full build history is available
 [jimeh/build-emacs-for-macos]: https://github.com/jimeh/build-emacs-for-macos
 [actions]: https://github.com/jimeh/emacs-builds/actions
 
-Nightly builds are scheduled for 2:35 UTC, based on the latest commit from the
-`master` branch of the [emacs-mirror/emacs][] repository. This means a nightly
-build will only be produced if there have been new commits since the last
-nightly build.
+Nightly builds are scheduled for 2:35 UTC every night, based on the latest
+commit from the `master` branch of the [emacs-mirror/emacs][] repository. This
+means a nightly build will only be produced if there have been new commits since
+the last nightly build.
 
 [emacs-mirror/emacs]: https://github.com/emacs-mirror/emacs
 
