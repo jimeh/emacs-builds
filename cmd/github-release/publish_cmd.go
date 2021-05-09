@@ -28,7 +28,7 @@ func publishCmd() *cli.Command {
 				Name:    "prerelease",
 				Usage:   "Git SHA of repo to create release on",
 				EnvVars: []string{"RELEASE_PRERELEASE"},
-				Value:   true,
+				Value:   false,
 			},
 		},
 		Action: actionHandler(publishAction),
