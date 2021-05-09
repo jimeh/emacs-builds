@@ -21,14 +21,14 @@ alt="GitHub issues">
 
 <p align="center">
   <strong>
-    Nightly binary builds of Emacs for macOS, with native-compilation enabled, as a
-    self-contained Emacs.app.
+    Nightly binary builds of Emacs for macOS as a self-contained Emacs.app,
+    with native-compilation.
   </strong>
 </p>
 
 ## Features
 
-- Self-contained Emacs.app application, with no external dependencies.
+- Self-contained Emacs.app application bundle, with no external dependencies.
 - Native-compilation is enabled in nightly builds from the `master` branch of
   Emacs, and should just work without the need to install GCC, libgccjit, or any
   other dependencies.
@@ -45,6 +45,10 @@ alt="GitHub issues">
   https://github.com/d12frosted/homebrew-emacs-plus/blob/master/patches/emacs-28/system-appearance.patch
 [emacs-plus]: https://github.com/d12frosted/homebrew-emacs-plus
 
+## System Requirements
+
+- Intel-based Mac running macOS 10.15.x or later.
+
 ## Downloads
 
 See the [Releases][] page to download latest builds.
@@ -54,8 +58,10 @@ See the [Releases][] page to download latest builds.
 ## Build Process
 
 Building Emacs is done using the [jimeh/build-emacs-for-macos][] build script,
-executed within a GitHub Actions workflow. Full build history is available
-[here][actions].
+executed within a GitHub Actions workflow. This is why macOS 10.15.x or later is
+required, as it's the oldest version of macOS available in GitHub Actions.
+
+Full history for all builds is available on GitHub Actions [here][actions].
 
 [jimeh/build-emacs-for-macos]: https://github.com/jimeh/build-emacs-for-macos
 [actions]: https://github.com/jimeh/emacs-builds/actions
