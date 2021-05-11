@@ -28,7 +28,8 @@ alt="GitHub issues">
 
 ## Features
 
-- Self-contained Emacs.app application bundle, with no external dependencies.
+- Self-contained Emacs.app application bundle, with no external dependencies,
+  built with the [jimeh/build-emacs-for-macos][] build script.
 - Native-compilation is enabled in nightly builds from the `master` branch of
   Emacs, and should just work without the need to install GCC, libgccjit, or any
   other dependencies.
@@ -39,6 +40,7 @@ alt="GitHub issues">
   commands used to produce a build. This is especially important right now as
   builds are not yet signed and notarized.
 
+[jimeh/build-emacs-for-macos]: https://github.com/jimeh/build-emacs-for-macos
 [fix-window-role]:
   https://github.com/d12frosted/homebrew-emacs-plus/blob/master/patches/emacs-28/fix-window-role.patch
 [system-appearance]:
@@ -54,7 +56,7 @@ alt="GitHub issues">
 See the [Releases][] page to download latest builds.
 
 Nightly builds of Emacs are for the part just fine, but if you don't like living
-too close to the edge, see [#7 Known Good Nightly Builds][7] for a list of
+too close to the edge, see issue [#7 Known Good Nightly Builds][7] for a list of
 recent nightly builds which have been actively used by a living being without
 any issues.
 
@@ -86,7 +88,7 @@ the last nightly build.
 ## Untrusted Application
 
 Currently builds are not signed or notarized, meaning macOS cannot verify
-Emacs.app came from a trusted developer, and by default you are not given and
+Emacs.app came from a trusted developer, and by default you are not given an
 option to trust the app and open it.
 
 Simplest way around this is to right-click (or control-click) on the Emacs app
