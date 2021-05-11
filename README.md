@@ -58,8 +58,12 @@ See the [Releases][] page to download latest builds.
 ## Build Process
 
 Building Emacs is done using the [jimeh/build-emacs-for-macos][] build script,
-executed within a GitHub Actions workflow. This is why macOS 10.15.x or later is
-required, as it's the oldest version of macOS available in GitHub Actions.
+executed within a GitHub Actions [workflow][]. This is why macOS 10.15.x or
+later is required, as it's the oldest version of macOS available in GitHub
+Actions.
+
+[workflow]:
+  https://github.com/jimeh/emacs-builds/blob/main/.github/workflows/build.yml
 
 Full history for all builds is available on GitHub Actions [here][actions].
 
