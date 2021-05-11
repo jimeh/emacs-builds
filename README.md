@@ -53,7 +53,13 @@ alt="GitHub issues">
 
 See the [Releases][] page to download latest builds.
 
+Nightly builds of Emacs are for the part just fine, but if you don't like living
+too close to the edge, see [#7 Known Good Nightly Builds][7] for a list of
+recent nightly builds which have been actively used by a living being without
+any issues.
+
 [releases]: https://github.com/jimeh/emacs-builds/releases
+[7]: https://github.com/jimeh/emacs-builds/issues/7
 
 ## Build Process
 
