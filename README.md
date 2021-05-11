@@ -35,6 +35,7 @@ alt="GitHub issues">
   other dependencies.
 - Includes the [fix-window-role][] and [system-appearance][] patches from the
   excellent [emacs-plus][] project.
+- Emacs source is fetched from the [emacs-mirror/emacs][] GitHub repository.
 - Build creation is transparent and public through the use of GitHub Actions,
   allowing anyone to inspect git commit SHAs, full source code, and exact
   commands used to produce a build. This is especially important right now as
@@ -46,6 +47,7 @@ alt="GitHub issues">
 [system-appearance]:
   https://github.com/d12frosted/homebrew-emacs-plus/blob/master/patches/emacs-28/system-appearance.patch
 [emacs-plus]: https://github.com/d12frosted/homebrew-emacs-plus
+[emacs-mirror/emacs]: https://github.com/emacs-mirror/emacs
 
 ## System Requirements
 
