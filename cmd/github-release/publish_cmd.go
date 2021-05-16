@@ -24,12 +24,6 @@ func publishCmd() *cli.Command {
 				Usage:   "Git SHA of repo to create release on",
 				EnvVars: []string{"GITHUB_SHA"},
 			},
-			&cli.BoolFlag{
-				Name:    "prerelease",
-				Usage:   "Git SHA of repo to create release on",
-				EnvVars: []string{"RELEASE_PRERELEASE"},
-				Value:   false,
-			},
 		},
 		Action: actionHandler(publishAction),
 	}
@@ -44,7 +38,6 @@ func publishAction(c *cli.Context, opts *globalOptions) error {
 	}
 
 	releaseSHA := c.String("release-sha")
-	prerelease := c.Bool("prerelease")
 
 	assetBaseName := filepath.Base(plan.Archive)
 	assetSumFile := plan.Archive + ".sha256"
@@ -65,20 +58,34 @@ func publishAction(c *cli.Context, opts *globalOptions) error {
 		fmt.Printf("    -> Done: %s\n", assetSum)
 	}
 
-	fmt.Printf("==> Checking release %s\n", plan.Release)
+	tagName := plan.Release.Name
+	name := plan.Release.Title
+
+	if name == "" {
+		name = tagName
+	}
+
+	fmt.Printf("==> Checking release %s\n", tagName)
 
 	release, resp, err := gh.Repositories.GetReleaseByTag(
-		c.Context, repo.Owner, repo.Name, plan.Release,
+		c.Context, repo.Owner, repo.Name, plan.Release.Name,
 	)
 	if err != nil {
 		if resp.StatusCode == http.StatusNotFound {
 			fmt.Println("    -> Release not found, creating...")
+
+			prerelease := false
+			if !plan.Release.Draft && plan.Release.Pre {
+				prerelease = true
+			}
+
 			release, _, err = gh.Repositories.CreateRelease(
 				c.Context, repo.Owner, repo.Name, &github.RepositoryRelease{
-					Name:            &plan.Release,
-					TagName:         &plan.Release,
+					Name:            &name,
+					TagName:         &tagName,
 					TargetCommitish: &releaseSHA,
 					Prerelease:      &prerelease,
+					Draft:           &plan.Release.Draft,
 				},
 			)
 			if err != nil {
@@ -89,8 +96,19 @@ func publishAction(c *cli.Context, opts *globalOptions) error {
 		}
 	}
 
-	if release.GetPrerelease() != prerelease {
-		release.Prerelease = &prerelease
+	if release.GetName() != name {
+		release.Name = &name
+
+		release, _, err = gh.Repositories.EditRelease(
+			c.Context, repo.Owner, repo.Name, release.GetID(), release,
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	if !plan.Release.Draft && release.GetPrerelease() != plan.Release.Pre {
+		release.Prerelease = &plan.Release.Pre
 
 		release, _, err = gh.Repositories.EditRelease(
 			c.Context, repo.Owner, repo.Name, release.GetID(), release,

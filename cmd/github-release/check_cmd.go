@@ -27,15 +27,15 @@ func checkAction(c *cli.Context, opts *globalOptions) error {
 
 	fmt.Printf(
 		"==> Checking github.com/%s for release: %s\n",
-		repo.String(), plan.Release,
+		repo.String(), plan.Release.Name,
 	)
 
 	release, resp, err := gh.Repositories.GetReleaseByTag(
-		c.Context, repo.Owner, repo.Name, plan.Release,
+		c.Context, repo.Owner, repo.Name, plan.Release.Name,
 	)
 	if err != nil {
 		if resp.StatusCode == http.StatusNotFound {
-			return fmt.Errorf("release %s does not exist", plan.Release)
+			return fmt.Errorf("release %s does not exist", plan.Release.Name)
 		} else {
 			return err
 		}

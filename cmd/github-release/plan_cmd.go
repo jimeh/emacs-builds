@@ -40,6 +40,21 @@ func planCmd() *cli.Command {
 				Name:  "sha",
 				Usage: "Override commit SHA of specified git branch/tag",
 			},
+			&cli.BoolFlag{
+				Name: "test-build",
+				Usage: "Plan a test build, which is published to a draft " +
+					"\"test-builds\" release",
+			},
+			&cli.StringFlag{
+				Name:  "test-build-name",
+				Usage: "Set a unique name to distinguish the ",
+			},
+			&cli.StringFlag{
+				Name:  "test-release-type",
+				Value: "prerelease",
+				Usage: "Type of release when doing a test-build " +
+					"(prerelease or draft)",
+			},
 		},
 		Action: actionHandler(planAction),
 	}
@@ -78,20 +93,37 @@ func planAction(c *cli.Context, opts *globalOptions) error {
 	cleanOS := sanitizeString(osInfo.Name + "-" + osInfo.ShortVersion())
 	cleanArch := sanitizeString(osInfo.Arch)
 
-	releaseName := fmt.Sprintf(
-		"Emacs.%s.%s.%s",
-		commit.DateString(), commit.ShortSHA(), cleanRef,
-	)
+	release := &Release{
+		Name: fmt.Sprintf(
+			"Emacs.%s.%s.%s",
+			commit.DateString(), commit.ShortSHA(), cleanRef,
+		),
+	}
 	archiveName := fmt.Sprintf(
-		"Emacs.%s.%s.%s.%s.%s.tbz",
+		"Emacs.%s.%s.%s.%s.%s",
 		commit.DateString(), commit.ShortSHA(), cleanRef, cleanOS, cleanArch,
 	)
+
+	if c.Bool("test-build") {
+		release.Title = "Test Builds"
+		release.Name = "test-builds"
+		if c.String("test-release-type") == "draft" {
+			release.Draft = true
+		} else {
+			release.Pre = true
+		}
+
+		archiveName += ".test"
+		if t := c.String("test-build-name"); t != "" {
+			archiveName += "." + sanitizeString(t)
+		}
+	}
 
 	plan := &Plan{
 		Commit:  commit,
 		OS:      osInfo,
-		Release: releaseName,
-		Archive: filepath.Join(buildsDir, archiveName),
+		Release: release,
+		Archive: filepath.Join(buildsDir, archiveName+".tbz"),
 	}
 
 	buf := bytes.Buffer{}
