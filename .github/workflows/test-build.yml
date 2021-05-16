@@ -1,0 +1,103 @@
+---
+name: Build
+on:
+  workflow_dispatch:
+    inputs:
+      gitRef:
+        description: "Emacs git ref to build"
+        required: true
+        default: "master"
+      releaseToolGitRef:
+        description: "Git ref to checkout of emacs-builds (github-release)"
+        required: true
+        default: "main"
+      buildScriptGitRef:
+        description: "Git ref to checkout of build-emacs-for-macos"
+        required: true
+        default: "master"
+      testBuildName:
+        description: "Test build name"
+        required: false
+        default: ""
+      testReleaseType:
+        description: "prerelease or draft"
+        required: true
+        default: "prerelease"
+      extraPlanArgs:
+        Description: "Extra plan args"
+        required: false
+        default: ""
+      extraBuildArgs:
+        Description: "Extra build args"
+        required: false
+        default: ""
+      extraReleaseArgs:
+        Description: "Extra release args"
+        required: false
+        default: ""
+
+jobs:
+  build-and-publish:
+    runs-on: macos-10.15
+    steps:
+      - name: Checkout emacs-builds repo
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.releaseToolGitRef }}
+          path: releaser
+      - name: Checkout build-emacs-for-macos repo
+        uses: actions/checkout@v2
+        with:
+          repository: jimeh/build-emacs-for-macos
+          ref: ${{ github.event.inputs.buildScriptGitRef }}
+          path: builder
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+      - name: Compile github-release tool
+        run: >-
+          go build -o ./github-release ./cmd/github-release
+        working-directory: releaser
+      - name: Plan build
+        run: >-
+          ./releaser/github-release --plan plan.yml plan
+          --work-dir '${{ github.workspace }}'
+          --test-build
+          --test-build-name="${{ github.event.inputs.testBuildName }}"
+          --test-release-type="${{ github.event.inputs.testReleaseType }}"
+          ${{ github.event.inputs.extraPlanArgs }}
+          ${{ github.event.inputs.gitRef }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Show plan
+        run: >-
+          cat plan.yml
+      - name: Check if planned release and asset already exist
+        id: check
+        continue-on-error: true
+        run: >-
+          ./releaser/github-release --plan plan.yml check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install dependencies
+        if: steps.check.outcome == 'failure'
+        run: >-
+          brew bundle --file=builder/Brewfile
+      - name: Build Emacs
+        if: steps.check.outcome == 'failure'
+        run: >-
+          ./builder/build-emacs-for-macos --plan=plan.yml
+          --work-dir '${{ github.workspace }}'
+          --native-full-aot
+          ${{ github.event.inputs.extraReleaseArgs }}
+      - name: Publish release
+        if: steps.check.outcome == 'failure'
+        run: >-
+          ./releaser/github-release --plan plan.yml publish
+          --release-sha="${{ github.event.inputs.releaseToolGitRef }}"
+          ${{ github.event.inputs.extraReleaseArgs }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
