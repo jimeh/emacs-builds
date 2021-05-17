@@ -13,9 +13,9 @@ import (
 )
 
 var app = &cli.App{
-	Name:      "link-tree",
+	Name:      "dylib-tree",
 	Usage:     "recursive list shared-libraries as a tree",
-	UsageText: "link-tree [options] <binary-file> [<binary-file>]",
+	UsageText: "dylib-tree [options] <binary-file> [<binary-file>]",
 	Flags: []cli.Flag{
 		&cli.IntFlag{
 			Name:  "depth",
