@@ -1,4 +1,4 @@
-module github.com/jimeh/build-emacs
+module github.com/jimeh/emacs-builds
 
 go 1.16
 
