@@ -8,7 +8,9 @@
 
 <p align="center">
   <a href="https://github.com/jimeh/emacs-builds/releases">
-    <img src="https://img.shields.io/github/v/tag/jimeh/emacs-builds?label=nightly" alt="GitHub tag (latest SemVer)">
+    <img
+  src="https://img.shields.io/github/v/release/jimeh/emacs-builds?label=nightly&color=%237F5AB6&logo=GNU%20Emacs&logoColor=white"
+  alt="GitHub release (latest)">
   </a>
   <a href="https://github.com/jimeh/emacs-builds/issues">
     <img src="https://img.shields.io/github/issues-raw/jimeh/emacs-builds.svg?style=flat&logo=github&logoColor=white"
