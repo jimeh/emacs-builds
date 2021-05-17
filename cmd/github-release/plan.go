@@ -6,8 +6,6 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type ReleaseType string
-
 type Release struct {
 	Name  string `yaml:"name"`
 	Title string `yaml:"title,omitempty"`
