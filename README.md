@@ -30,16 +30,15 @@
 
 ## Features
 
-- Self-contained Emacs.app application bundle, with no external dependencies,
-  built with the [jimeh/build-emacs-for-macos][] build script.
-- Native-compilation ([gccemacs][]). (Nightly builds)
+- Self-contained Emacs.app application bundle, with no external dependencies.
+- Native-compilation ([gccemacs][]).
+- Native JSON parsing via libjansson.
 - SVG rendering via librsvg.
 - Various image formats are supported via macOS native image APIs.
-- Native JSON parsing via libjansson (Emacs 27.x and later).
 - Xwidget-webkit support is enabled, allowing access to a embedded WebKit-based
-  browser with `M-x xwidget-webkit-browse-url`. (Emacs27.x and later)
+  browser with `M-x xwidget-webkit-browse-url`.
 - Native XML parsing via libxml2.
-- Dynamic module loading. (Nightly builds)
+- Dynamic module loading.
 - Includes the [fix-window-role][] and [system-appearance][] patches from the
   excellent [emacs-plus][] project.
 - Emacs source is fetched from the [emacs-mirror/emacs][] GitHub repository.
@@ -47,8 +46,9 @@
   allowing anyone to inspect git commit SHAs, full source code, and exact
   commands used to produce a build. This is especially important right now as
   builds are not yet signed and notarized.
+- Uses [build-emacs-for-macos][] to build the self-contained application bundle.
 
-[jimeh/build-emacs-for-macos]: https://github.com/jimeh/build-emacs-for-macos
+[build-emacs-for-macos]: https://github.com/jimeh/build-emacs-for-macos
 [gccemacs]: https://www.emacswiki.org/emacs/GccEmacs
 [fix-window-role]:
   https://github.com/d12frosted/homebrew-emacs-plus/blob/master/patches/emacs-28/fix-window-role.patch
