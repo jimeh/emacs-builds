@@ -73,28 +73,6 @@ any issues.
 [releases]: https://github.com/jimeh/emacs-builds/releases
 [7]: https://github.com/jimeh/emacs-builds/issues/7
 
-## Build Process
-
-Building Emacs is done using the [jimeh/build-emacs-for-macos][] build script,
-executed within a GitHub Actions [workflow][]. This is why macOS 10.15.x or
-later is required, as it's the oldest version of macOS available in GitHub
-Actions.
-
-[workflow]:
-  https://github.com/jimeh/emacs-builds/blob/main/.github/workflows/build.yml
-
-Full history for all builds is available on GitHub Actions [here][actions].
-
-[jimeh/build-emacs-for-macos]: https://github.com/jimeh/build-emacs-for-macos
-[actions]: https://github.com/jimeh/emacs-builds/actions
-
-Nightly builds are scheduled for 0:00 UTC every night, based on the latest
-commit from the `master` branch of the [emacs-mirror/emacs][] repository. This
-means a nightly build will only be produced if there have been new commits since
-the last nightly build.
-
-[emacs-mirror/emacs]: https://github.com/emacs-mirror/emacs
-
 ## Untrusted Application
 
 Currently builds are not signed or notarized, meaning macOS cannot verify
@@ -105,6 +83,58 @@ Simplest way around this is to right-click (or control-click) on the Emacs app
 in Finder and select "Open". You will then be given the same warning as before,
 but with a "Open" button now available to trust and open the app. After that you
 can open the application like normal without any warnings.
+
+Builds will soon be signed and notarized, progress is tracked in [Issue #1][1].
+
+[1]: https://github.com/jimeh/emacs-builds/issues/1
+
+## Use Emacs.app as `emacs` CLI Tool
+
+As the application bundle is self-contained, the main executable needs to be run
+from within the application bundle. This means a simple symlink to
+`Emacs.app/Contents/MacOS/Emacs` will not work. Instead the best approach is to
+create a shell alias called `emacs` pointing to the right place.
+
+For example, this will expose both `emacs` and `emacsclient`:
+
+```bash
+if [ -f "/Applications/Emacs.app/Contents/MacOS/Emacs" ]; then
+  export EMACS="/Applications/Emacs.app/Contents/MacOS/Emacs"
+  alias emacs="$EMACS -nw"
+fi
+
+if [ -f "/Applications/Emacs.app/Contents/MacOS/bin/emacsclient" ]; then
+  alias emacsclient="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
+fi
+```
+
+Setting the `EMACS` variable to the binary path seems to be a good idea, as some
+tools seem to use it to figure out the path to Emacs' executable, including
+[doom-emacs][]' `doom` CLI tool.
+
+[doom-emacs]: https://github.com/hlissner/doom-emacs
+
+## Build Process
+
+Building Emacs is done using the [jimeh/build-emacs-for-macos][] build script,
+executed within a GitHub Actions [workflow][]. This is why macOS 10.15.x or
+later is required, as it's the oldest version of macOS available in GitHub
+Actions.
+
+[jimeh/build-emacs-for-macos]: https://github.com/jimeh/build-emacs-for-macos
+[workflow]:
+  https://github.com/jimeh/emacs-builds/blob/main/.github/workflows/build.yml
+
+Full history for all builds is available on GitHub Actions [here][actions].
+
+[actions]: https://github.com/jimeh/emacs-builds/actions
+
+Nightly builds are scheduled for 0:00 UTC every night, based on the latest
+commit from the `master` branch of the [emacs-mirror/emacs][] repository. This
+means a nightly build will only be produced if there have been new commits since
+the last nightly build.
+
+[emacs-mirror/emacs]: https://github.com/emacs-mirror/emacs
 
 ## Issues / To-Do
 
