@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: jimeh/build-emacs-for-macos
-          ref: "0.4.14"
+          ref: "0.4.15"
           path: builder
       - uses: ruby/setup-ruby@v1
         with:
@@ -75,6 +75,8 @@ jobs:
           --work-dir '${{ github.workspace }}'
           --native-full-aot
           ${{ github.event.inputs.extraReleaseArgs }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish release
         if: steps.check.outcome == 'failure'
         run: >-
