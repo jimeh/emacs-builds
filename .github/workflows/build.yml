@@ -13,8 +13,16 @@ on:
         Description: "Extra plan args"
         required: false
         default: ""
+      extraCheckArgs:
+        Description: "Extra check args"
+        required: false
+        default: ""
       extraBuildArgs:
         Description: "Extra build args"
+        required: false
+        default: ""
+      extraPackageArgs:
+        Description: "Extra package args"
         required: false
         default: ""
       extraReleaseArgs:
@@ -23,64 +31,164 @@ on:
         default: ""
 
 jobs:
-  build-and-publish:
+  plan:
     runs-on: macos-10.15
+    outputs:
+      check: "${{ steps.check.outcome }}"
     steps:
-      - name: Checkout emacs-builds repo
-        uses: actions/checkout@v2
-        with:
-          path: releaser
       - name: Checkout build-emacs-for-macos repo
         uses: actions/checkout@v2
         with:
           repository: jimeh/build-emacs-for-macos
-          ref: "0.4.16"
+          ref: "v0.5.0"
           path: builder
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.7
       - uses: actions/setup-go@v2
         with:
           go-version: 1.16
-      - name: Compile github-release tool
-        run: >-
-          go build -o ./github-release ./cmd/github-release
-        working-directory: releaser
+      - name: Pre-build emacs-builder tool
+        run: make build
+        working-directory: builder
       - name: Plan build
         run: >-
-          ./releaser/github-release --plan plan.yml plan
-          --work-dir '${{ github.workspace }}'
+          builder/bin/emacs-builder -l debug plan
+          --output build-plan.yml
+          --output-dir '${{ github.workspace }}/builds'
           ${{ github.event.inputs.extraPlanArgs }}
-          ${{ github.event.inputs.gitRef }}
+          '${{ github.event.inputs.gitRef }}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Show plan
-        run: >-
-          cat plan.yml
+        run: cat build-plan.yml
       - name: Check if planned release and asset already exist
         id: check
         continue-on-error: true
         run: >-
-          ./releaser/github-release --plan plan.yml check
+          builder/bin/emacs-builder -l debug release --plan build-plan.yml check
+          ${{ github.event.inputs.extraCheckArgs }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload pre-built emacs-builder artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: emacs-builder
+          path: builder/bin/emacs-builder
+          if-no-files-found: error
+      - name: Upload build-plan.yml artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-plan.yml
+          path: build-plan.yml
+          if-no-files-found: error
+
+  build:
+    runs-on: macos-10.15
+    needs: [plan]
+    # Only run if check for existing release and asset failed.
+    if: ${{ needs.plan.outputs.check == 'failure' }}
+    steps:
+      - name: Checkout build-emacs-for-macos repo
+        uses: actions/checkout@v2
+        with:
+          repository: jimeh/build-emacs-for-macos
+          ref: "v0.5.0"
+          path: builder
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
       - name: Install dependencies
-        if: steps.check.outcome == 'failure'
-        run: >-
-          brew bundle --file=builder/Brewfile
+        run: make bootstrap-ci
+        working-directory: builder
+      - name: Download pre-built emacs-builder artifact
+        uses: actions/download-artifact@v2
+        id: builder
+        with:
+          name: emacs-builder
+          path: bin
+      - name: Ensure emacs-builder is executable
+        run: chmod +x bin/emacs-builder
+      - name: Download build-plan.yml artifact
+        uses: actions/download-artifact@v2
+        id: plan
+        with:
+          name: build-plan.yml
+          path: ./
       - name: Build Emacs
-        if: steps.check.outcome == 'failure'
         run: >-
-          ./builder/build-emacs-for-macos --plan=plan.yml
-          --work-dir '${{ github.workspace }}'
-          --native-full-aot
-          ${{ github.event.inputs.extraReleaseArgs }}
+          ./builder/build-emacs-for-macos --plan build-plan.yml
+          --native-full-aot ${{ github.event.inputs.extraBuildArgs }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Publish release
-        if: steps.check.outcome == 'failure'
+      - name: Install the Apple signing certificate
+        run: |
+          # create variables
+          CERTIFICATE_PATH="$RUNNER_TEMP/build_certificate.p12"
+          KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
+
+          # import certificate and provisioning profile from secrets
+          echo -n "$CERT_BASE64" | base64 --decode --output "$CERTIFICATE_PATH"
+
+          # create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+          # import certificate to keychain
+          security import "$CERTIFICATE_PATH" -P "$CERT_PASSWORD" -A \
+            -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH"
+        env:
+          CERT_BASE64: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_P12_BASE64 }}
+          CERT_PASSWORD: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      - name: Sign, package and notarize build
         run: >-
-          ./releaser/github-release --plan plan.yml publish
+          bin/emacs-builder -l debug package -v --plan build-plan.yml
+          --sign --remove-source-dir
+          ${{ github.event.inputs.extraPackageArgs }}
+        env:
+          AC_USERNAME: ${{ secrets.AC_USERNAME }}
+          AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+          AC_PROVIDER: ${{ secrets.AC_PROVIDER }}
+          AC_SIGN_IDENTITY: ${{ secrets.AC_SIGN_IDENTITY }}
+      - name: Upload disk image artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: dmg
+          path: |
+            builds/*.dmg
+            builds/*.sha*
+          if-no-files-found: error
+      - name: Clean up keychain used for signing certificate
+        if: ${{ always() }}
+        run: |
+          security delete-keychain "$RUNNER_TEMP/app-signing.keychain-db"
+
+  release:
+    runs-on: macos-10.15
+    needs: [build]
+    steps:
+      - name: Download pre-built emacs-builder artifact
+        uses: actions/download-artifact@v2
+        id: builder
+        with:
+          name: emacs-builder
+          path: bin
+      - name: Ensure emacs-builder is executable
+        run: chmod +x bin/emacs-builder
+      - name: Download build-plan.yml artifact
+        uses: actions/download-artifact@v2
+        id: plan
+        with:
+          name: build-plan.yml
+          path: ./
+      - name: Download disk image artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: dmg
+          path: builds
+      - name: Publish disk image to GitHub Release
+        run: >-
+          bin/emacs-builder -l debug release --plan build-plan.yml publish
           ${{ github.event.inputs.extraReleaseArgs }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
