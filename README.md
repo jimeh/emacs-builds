@@ -44,8 +44,8 @@
 - Emacs source is fetched from the [emacs-mirror/emacs][] GitHub repository.
 - Build creation is transparent and public through the use of GitHub Actions,
   allowing anyone to inspect git commit SHAs, full source code, and exact
-  commands used to produce a build. This is especially important right now as
-  builds are not yet signed and notarized.
+  commands used to produce a build.
+- Emacs.app is signed with a developer certificate and notarized by Apple.
 - Uses [build-emacs-for-macos][] to build the self-contained application bundle.
 
 [build-emacs-for-macos]: https://github.com/jimeh/build-emacs-for-macos
@@ -73,21 +73,6 @@ any issues.
 [releases]: https://github.com/jimeh/emacs-builds/releases
 [7]: https://github.com/jimeh/emacs-builds/issues/7
 
-## Untrusted Application
-
-Currently builds are not signed or notarized, meaning macOS cannot verify
-Emacs.app came from a trusted developer, and by default you are not given an
-option to trust the app and open it.
-
-Simplest way around this is to right-click (or control-click) on the Emacs app
-in Finder and select "Open". You will then be given the same warning as before,
-but with a "Open" button now available to trust and open the app. After that you
-can open the application like normal without any warnings.
-
-Builds will soon be signed and notarized, progress is tracked in [Issue #1][1].
-
-[1]: https://github.com/jimeh/emacs-builds/issues/1
-
 ## Use Emacs.app as `emacs` CLI Tool
 
 Builds come with a custom `emacs` shell script launcher for use from the command
@@ -96,7 +81,7 @@ line, located next to `emacsclient` in `Emacs.app/Contents/MacOS/bin`.
 The custom `emacs` script makes sure to use the main
 `Emacs.app/Contents/MacOS/Emacs` executable from the correct path, ensuring it
 finds all the relevant dependencies within the Emacs.app bundle, regardless of
-it it's exposed via `PATH` or symlinked to from elsewhere.
+if it's exposed via `PATH` or symlinked from elsewhere.
 
 To use it, simply add `Emacs.app/Contents/MacOS/bin` to your `PATH`. For
 example, if you place Emacs.app in `/Applications`:
@@ -130,6 +115,24 @@ Nightly builds are scheduled for 0:00 UTC every night, based on the latest
 commit from the `master` branch of the [emacs-mirror/emacs][] repository. This
 means a nightly build will only be produced if there have been new commits since
 the last nightly build.
+
+## Application Signing / Trust
+
+As of June 21st, 2021, all builds are fully signed and notarized. The signing
+certificate used is: `Developer ID Application: Jim Myhrberg (5HX66GF82Z)`
+
+To verify the application signature and notarization, you can use `spctl`:
+
+```bash
+$ spctl -vvv --assess --type exec /Applications/Emacs.app
+/Applications/Emacs.app: accepted
+source=Notarized Developer ID
+origin=Developer ID Application: Jim Myhrberg (5HX66GF82Z)
+```
+
+All builds also come with a SHA256 checksum file, which itself can be double
+checked against the SHA256 checksum log output from the packaging step of the
+GitHub Actions workflow run which produced the build.
 
 [emacs-mirror/emacs]: https://github.com/emacs-mirror/emacs
 
