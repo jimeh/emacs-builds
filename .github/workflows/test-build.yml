@@ -54,6 +54,12 @@ jobs:
       - uses: actions/setup-go@v2
         with:
           go-version: 1.16
+      - uses: actions/cache@v2
+        id: builder-cache
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('builder/**/go.sum') }}
+          restore-keys: ${{ runner.os }}-go-
       - name: Pre-build emacs-builder tool
         run: make build
         working-directory: builder
