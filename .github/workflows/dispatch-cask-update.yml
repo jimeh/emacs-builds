@@ -1,0 +1,15 @@
+---
+name: Dispatch Cask Update
+on:
+  release:
+    types: [published]
+
+jobs:
+  dispatch-cask-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run update formulas workflow in jimeh/homebrew-emacs-builds
+        run: >-
+          gh workflow run --repo jimeh/homebrew-emacs-builds update-formulas.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
