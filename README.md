@@ -77,23 +77,19 @@ any issues.
 
 ### Homebrew Cask
 
-Install the `jimeh/emacs-builds` Homebrew tap:
-
-```
-brew tap jimeh/emacs-builds
-```
-
-Then either install the latest nightly build:
-
-```
-brew install --cask emacs-app-nightly
-```
-
-Or install the latest known good build listed on [#7][7]:
-
-```
-brew install --cask emacs-app-good
-```
+1. Install the `jimeh/emacs-builds` Homebrew tap:
+   ```
+   brew tap jimeh/emacs-builds
+   ```
+2. Install one of the available casks:
+   - `emacs-app-nightly` for the latest nightly build:
+     ```
+     brew install --cask emacs-app-nightly
+     ```
+   - `emacs-app-good` for the latest known good nightly build listed on [#7][7]:
+     ```
+     brew install --cask emacs-app-good
+     ```
 
 [7]: https://github.com/jimeh/emacs-builds/issues/7
 
