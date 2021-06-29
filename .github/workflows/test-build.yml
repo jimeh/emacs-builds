@@ -19,23 +19,23 @@ on:
         required: true
         default: "prerelease"
       extraPlanArgs:
-        Description: "Extra plan args"
+        description: "Extra plan args"
         required: false
         default: ""
       extraCheckArgs:
-        Description: "Extra check args"
+        description: "Extra check args"
         required: false
         default: ""
       extraBuildArgs:
-        Description: "Extra build args"
+        description: "Extra build args"
         required: false
         default: ""
       extraPackageArgs:
-        Description: "Extra package args"
+        description: "Extra package args"
         required: false
         default: ""
       extraReleaseArgs:
-        Description: "Extra release args"
+        description: "Extra release args"
         required: false
         default: ""
 
