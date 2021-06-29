@@ -61,7 +61,9 @@
 
 - Intel-based Mac running macOS 10.15.x or later.
 
-## Downloads
+## Installation
+
+### Manual Download
 
 See the [Releases][] page to download latest builds.
 
@@ -73,7 +75,42 @@ any issues.
 [releases]: https://github.com/jimeh/emacs-builds/releases
 [7]: https://github.com/jimeh/emacs-builds/issues/7
 
+### Homebrew Cask
+
+Install the `jimeh/emacs-builds` Homebrew tap:
+
+```
+brew tap jimeh/emacs-builds
+```
+
+Then either install the latest nightly build:
+
+```
+brew install --cask emacs-app-nightly
+```
+
+Or install the latest known good build listed on [#7][7]:
+
+```
+brew install --cask emacs-app-good
+```
+
+[7]: https://github.com/jimeh/emacs-builds/issues/7
+
 ## Use Emacs.app as `emacs` CLI Tool
+
+### Installed via Homebrew Cask
+
+The cask installation method sets up CLI usage automatically by exposing a
+`emacs` command. However it will launch Emacs into GUI mode. To instead have
+`emacs` in your terminal open a terminal instance of Emacs, add the following
+alias to your shell setup:
+
+```bash
+alias emacs="emacs -nw"
+```
+
+### Installed Manually
 
 Builds come with a custom `emacs` shell script launcher for use from the command
 line, located next to `emacsclient` in `Emacs.app/Contents/MacOS/bin`.
