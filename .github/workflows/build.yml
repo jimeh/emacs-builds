@@ -40,7 +40,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: jimeh/build-emacs-for-macos
-          ref: "v0.6.5"
+          ref: "v0.6.6"
           path: builder
       - uses: actions/setup-go@v2
         with:
@@ -96,7 +96,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: jimeh/build-emacs-for-macos
-          ref: "v0.6.5"
+          ref: "v0.6.6"
           path: builder
       - uses: ruby/setup-ruby@v1
         with:
@@ -192,9 +192,14 @@ jobs:
         with:
           name: dmg
           path: builds
-      - name: Publish disk image to GitHub Release
+      - name: Publish disk image to a GitHub Release
         run: >-
           bin/emacs-builder -l debug release --plan build-plan.yml publish
           ${{ github.event.inputs.extraReleaseArgs }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Trigger update casks workflow in homebrew tap
+        run: >-
+          gh workflow run --repo jimeh/homebrew-emacs-builds update-casks.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
