@@ -98,7 +98,7 @@ any issues.
      brew install --cask emacs-app-good
      ```
    - `emacs-app` for the latest stable release of Emacs (does not include
-     native-comp at this of writing):
+     native-comp at time of writing):
      ```
      brew install --cask emacs-app
      ```
