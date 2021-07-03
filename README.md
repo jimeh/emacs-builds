@@ -26,15 +26,15 @@
 
 <p align="center">
   <strong>
-    Nightly binary builds of Emacs for macOS as a self-contained Emacs.app,
-    with native-compilation.
+    Self-contained Emacs.app builds for macOS, with native-compilation support
+    in nightly builds.
   </strong>
 </p>
 
 ## Features
 
 - Self-contained Emacs.app application bundle, with no external dependencies.
-- Native-compilation ([gccemacs][]).
+- Native-compilation ([gccemacs][]), nightly builds only.
 - Native JSON parsing via libjansson.
 - SVG rendering via librsvg.
 - Various image formats are supported via macOS native image APIs.
@@ -63,12 +63,15 @@
 ## System Requirements
 
 - Intel-based Mac running macOS 10.15.x or later.
+- Homebrew `gcc` formula (nightly builds only).
+- Xcode Command Line Tools (nightly builds only).
 
 ## Installation
 
 ### Manual Download
 
-See the [Releases][] page to download latest builds.
+See the [Releases][] page to download latest builds, or [here](latest) for the
+latest stable release.
 
 Nightly builds of Emacs are for the part just fine, but if you don't like living
 too close to the edge, see issue [#7 Known Good Nightly Builds][7] for a list of
@@ -76,6 +79,7 @@ recent nightly builds which have been actively used by a living being without
 any issues.
 
 [releases]: https://github.com/jimeh/emacs-builds/releases
+[latest]: https://github.com/jimeh/emacs-builds/releases/latest
 [7]: https://github.com/jimeh/emacs-builds/issues/7
 
 ### Homebrew Cask
@@ -92,6 +96,11 @@ any issues.
    - `emacs-app-good` for the latest known good nightly build listed on [#7][7]:
      ```
      brew install --cask emacs-app-good
+     ```
+   - `emacs-app` for the latest stable release of Emacs (does not include
+     native-comp at this of writing):
+     ```
+     brew install --cask emacs-app
      ```
 
 [7]: https://github.com/jimeh/emacs-builds/issues/7
