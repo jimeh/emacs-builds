@@ -8,11 +8,15 @@
 
 <p align="center">
   <a href="https://github.com/jimeh/emacs-builds/releases/latest">
-    <img alt="GitHub release (stable)" src="https://img.shields.io/github/v/release/jimeh/emacs-builds?style=flat&label=stable&color=%237F5AB6&logo=GNU%20Emacs&logoColor=white">
+    <img alt="GitHub release (stable)" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjimeh%2Fhomebrew-emacs-builds%2Fmeta%2FCasks%2Femacs-app%2Fshield.json">
   </a>
   <a href="https://github.com/jimeh/emacs-builds/releases">
-    <img alt="GitHub release (nightly)" src="https://img.shields.io/github/v/release/jimeh/emacs-builds?include_prereleases&style=flat&label=nightly&color=%237F5AB6&logo=GNU%20Emacs&logoColor=white">
+    <img alt="GitHub release (nightly)" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjimeh%2Fhomebrew-emacs-builds%2Fmeta%2FCasks%2Femacs-app-nightly%2Fshield.json">
   </a>
+  <a href="https://github.com/jimeh/emacs-builds/issues/7">
+    <img alt="GitHub release (known good nightly)" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjimeh%2Fhomebrew-emacs-builds%2Fmeta%2FCasks%2Femacs-app-good%2Fshield.json">
+  </a>
+  <br />
   <a href="https://github.com/jimeh/emacs-builds/issues">
     <img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/jimeh/emacs-builds?style=flat&logo=github&logoColor=white">
   </a>
