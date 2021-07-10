@@ -88,7 +88,9 @@ any issues.
 
 ### Homebrew Cask
 
-1. Install the `jimeh/emacs-builds` Homebrew tap:
+1. Install the
+   [`jimeh/emacs-builds`](https://github.com/jimeh/homebrew-emacs-builds)
+   Homebrew tap:
    ```
    brew tap jimeh/emacs-builds
    ```
