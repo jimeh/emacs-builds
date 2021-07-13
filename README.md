@@ -66,7 +66,7 @@
 
 ## System Requirements
 
-- Intel-based Mac running macOS 10.15.x or later.
+- macOS 10.15.x or later (uses Rosetta2 on M1-based macs).
 - Homebrew `gcc` formula (nightly builds only).
 - Xcode Command Line Tools (nightly builds only).
 
