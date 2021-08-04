@@ -29,7 +29,7 @@ on:
       extraBuildArgs:
         description: "Extra build args"
         required: false
-        default: ""
+        default: "--native-full-aot --no-relink-eln-files"
       extraPackageArgs:
         description: "Extra package args"
         required: false
@@ -43,7 +43,8 @@ jobs:
   plan:
     runs-on: macos-10.15
     outputs:
-      check: "${{ steps.check.outcome }}"
+      check: ${{ steps.check.outcome }}
+      builder_sha: ${{ steps.builder_sha.outputs.sha }}
     steps:
       - name: Checkout build-emacs-for-macos repo
         uses: actions/checkout@v2
@@ -51,11 +52,13 @@ jobs:
           repository: jimeh/build-emacs-for-macos
           ref: ${{ github.event.inputs.emacsBuilderGitRef }}
           path: builder
+      - name: Store builder Git SHA
+        run: echo "::set-output name=sha::$(git rev-parse HEAD)"
+        working-directory: builder
       - uses: actions/setup-go@v2
         with:
           go-version: 1.16
       - uses: actions/cache@v2
-        id: builder-cache
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('builder/**/go.sum') }}
@@ -107,7 +110,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: jimeh/build-emacs-for-macos
-          ref: ${{ github.event.inputs.emacsBuilderGitRef }}
+          ref: ${{ needs.plan.outputs.builder_sha }}
           path: builder
       - uses: ruby/setup-ruby@v1
         with:
@@ -115,26 +118,50 @@ jobs:
       - name: Install dependencies
         run: make bootstrap-ci
         working-directory: builder
+      - name: Download build-plan.yml artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build-plan.yml
+          path: ./
+      - uses: actions/cache@v2
+        id: builds-cache
+        with:
+          path: ./builds
+          key: ${{ runner.os }}-builds-${{ needs.plan.outputs.builder_sha }}-${{ hashFiles('build-plan.yml') }}
+      - name: Build Emacs
+        if: steps.builds-cache.outputs.cache-hit != 'true'
+        run: >-
+          ./builder/build-emacs-for-macos --plan build-plan.yml
+          ${{ github.event.inputs.extraBuildArgs }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload unsigned app artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: unsigned-app
+          path: builds/*.tbz
+          if-no-files-found: error
+
+  package:
+    runs-on: macos-10.15
+    needs: [build]
+    steps:
+      - name: Download unsigned app artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: unsigned-app
+          path: builds
+      - name: Extract unsigned app archive
+        run: |
+          find * -name '*.tbz' -exec tar xvjf "{}" \;
+        working-directory: builds
       - name: Download pre-built emacs-builder artifact
         uses: actions/download-artifact@v2
-        id: builder
         with:
           name: emacs-builder
           path: bin
       - name: Ensure emacs-builder is executable
         run: chmod +x bin/emacs-builder
-      - name: Download build-plan.yml artifact
-        uses: actions/download-artifact@v2
-        id: plan
-        with:
-          name: build-plan.yml
-          path: ./
-      - name: Build Emacs
-        run: >-
-          ./builder/build-emacs-for-macos --plan build-plan.yml
-          --native-full-aot ${{ github.event.inputs.extraBuildArgs }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install the Apple signing certificate
         run: |
           # create variables
@@ -160,8 +187,7 @@ jobs:
       - name: Sign, package and notarize build
         run: >-
           bin/emacs-builder -l debug package -v --plan build-plan.yml
-          --sign --remove-source-dir
-          ${{ github.event.inputs.extraPackageArgs }}
+          --sign ${{ github.event.inputs.extraPackageArgs }}
         env:
           AC_USERNAME: ${{ secrets.AC_USERNAME }}
           AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
@@ -170,7 +196,7 @@ jobs:
       - name: Upload disk image artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: dmg
+          name: signed-dmg
           path: |
             builds/*.dmg
             builds/*.sha*
@@ -182,11 +208,10 @@ jobs:
 
   release:
     runs-on: macos-10.15
-    needs: [build]
+    needs: [package]
     steps:
       - name: Download pre-built emacs-builder artifact
         uses: actions/download-artifact@v2
-        id: builder
         with:
           name: emacs-builder
           path: bin
@@ -194,14 +219,13 @@ jobs:
         run: chmod +x bin/emacs-builder
       - name: Download build-plan.yml artifact
         uses: actions/download-artifact@v2
-        id: plan
         with:
           name: build-plan.yml
           path: ./
       - name: Download disk image artifact
         uses: actions/download-artifact@v2
         with:
-          name: dmg
+          name: signed-dmg
           path: builds
       - name: Publish disk image to GitHub Release
         run: >-
