@@ -121,7 +121,8 @@ jobs:
       - name: Build Emacs
         run: >-
           ./builder/build-emacs-for-macos --plan build-plan.yml
-          --native-full-aot ${{ github.event.inputs.extraBuildArgs }}
+          --native-full-aot --no-relink-eln-files
+          ${{ github.event.inputs.extraBuildArgs }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install the Apple signing certificate
