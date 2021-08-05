@@ -53,6 +53,7 @@ jobs:
           ref: ${{ github.event.inputs.emacsBuilderGitRef }}
           path: builder
       - name: Store builder Git SHA
+        id: builder_sha
         run: echo "::set-output name=sha::$(git rev-parse HEAD)"
         working-directory: builder
       - uses: actions/setup-go@v2
@@ -123,13 +124,7 @@ jobs:
         with:
           name: build-plan.yml
           path: ./
-      - uses: actions/cache@v2
-        id: builds-cache
-        with:
-          path: ./builds
-          key: ${{ runner.os }}-builds-${{ needs.plan.outputs.builder_sha }}-${{ hashFiles('build-plan.yml') }}
       - name: Build Emacs
-        if: steps.builds-cache.outputs.cache-hit != 'true'
         run: >-
           ./builder/build-emacs-for-macos --plan build-plan.yml
           ${{ github.event.inputs.extraBuildArgs }}
