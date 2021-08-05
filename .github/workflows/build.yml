@@ -121,7 +121,7 @@ jobs:
       - name: Build Emacs
         run: >-
           ./builder/build-emacs-for-macos --plan build-plan.yml
-          --native-full-aot --no-relink-eln-files
+          --no-relink-eln-files --native-full-aot --no-archive
           ${{ github.event.inputs.extraBuildArgs }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
