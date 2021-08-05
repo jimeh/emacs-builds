@@ -157,6 +157,11 @@ jobs:
           path: bin
       - name: Ensure emacs-builder is executable
         run: chmod +x bin/emacs-builder
+      - name: Download build-plan.yml artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build-plan.yml
+          path: ./
       - name: Install the Apple signing certificate
         run: |
           # create variables
