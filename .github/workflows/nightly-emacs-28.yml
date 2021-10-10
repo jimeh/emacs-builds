@@ -1,0 +1,48 @@
+---
+name: Nightly (emacs-28)
+on:
+  push:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+    inputs:
+      git_sha:
+        description: Override Emacs git commit SHA to build
+        required: false
+
+jobs:
+  prepare:
+    name: Prepare
+    uses: jimeh/emacs-builds/.github/workflows/_prepare.yml@main
+    with:
+      builder_ref: v0.6.17
+    secrets:
+      TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
+
+  build:
+    name: Build
+    needs: [prepare]
+    uses: jimeh/emacs-builds/.github/workflows/_build.yml@main
+    with:
+      os: macos-10.15
+      git_ref: emacs-28
+      git_sha: ${{ github.event.inputs.git_sha }}
+    secrets:
+      APPLE_DEVELOPER_CERTIFICATE_P12_BASE64: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_P12_BASE64 }}
+      APPLE_DEVELOPER_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_PASSWORD }}
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      AC_USERNAME: ${{ secrets.AC_USERNAME }}
+      AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+      AC_PROVIDER: ${{ secrets.AC_PROVIDER }}
+      AC_SIGN_IDENTITY: ${{ secrets.AC_SIGN_IDENTITY }}
+      TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
+
+  release:
+    name: Release
+    needs: [build]
+    uses: jimeh/emacs-builds/.github/workflows/_release.yml@main
+    with:
+      plan_artifact: catalina_build-plan.yml
+      dmg_artifact: dmg
+    secrets:
+      TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
