@@ -1,5 +1,6 @@
 ---
 # Requires _prepare.yml and _build.yml re-usable workflows to have run.
+name: _release
 on:
   workflow_call:
     inputs:
