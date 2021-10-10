@@ -1,6 +1,5 @@
 ---
 # Requires _prepare.yml re-usable workflow to have run.
-name: Build for macOS
 on:
   workflow_call:
     inputs:

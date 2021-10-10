@@ -1,5 +1,4 @@
 ---
-name: Prepare
 on:
   workflow_call:
     inputs:
