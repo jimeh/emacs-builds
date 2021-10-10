@@ -1,38 +1,21 @@
 ---
-name: Build
+name: Nightly (master)
 on:
+  push:
+  schedule:
+    - cron: "0 0 * * *"
   workflow_dispatch:
     inputs:
-      git_ref:
-        description: Emacs git ref to build
-        required: true
-        default: "master"
       git_sha:
         description: Override Emacs git commit SHA to build
         required: false
-      builder_ref:
-        description: "Git ref to checkout of build-emacs-for-macos"
-        required: true
-        default: "master"
-      os:
-        description: 'Runner OS ("macos-10.15" or "macos-11")'
-        required: true
-        default: "macos-10.15"
-      test_build_name:
-        description: "Test build name"
-        required: false
-        default: ""
-      test_release_type:
-        description: "prerelease or draft"
-        required: false
-        default: ""
 
 jobs:
   prepare:
     name: Prepare
     uses: jimeh/emacs-builds/.github/workflows/_prepare.yml@main
     with:
-      builder_ref: ${{ github.event.inputs.builder_ref }}
+      builder_ref: v0.6.17
     secrets:
       TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
 
@@ -42,10 +25,8 @@ jobs:
     uses: jimeh/emacs-builds/.github/workflows/_build.yml@main
     with:
       os: macos-10.15
-      git_ref: ${{ github.event.inputs.git_ref }}
+      git_ref: master
       git_sha: ${{ github.event.inputs.git_sha }}
-      test_build_name: ${{ github.event.inputs.test_build_name }}
-      test_release_type: ${{ github.event.inputs.test_release_type }}
     secrets:
       APPLE_DEVELOPER_CERTIFICATE_P12_BASE64: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_P12_BASE64 }}
       APPLE_DEVELOPER_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_PASSWORD }}
@@ -61,7 +42,7 @@ jobs:
     needs: [build]
     uses: jimeh/emacs-builds/.github/workflows/_release.yml@main
     with:
-      plan_artifact: big-sur_build-plan.yml
+      plan_artifact: catalina_build-plan.yml
       dmg_artifact: dmg
     secrets:
       TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}

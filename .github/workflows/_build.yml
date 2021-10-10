@@ -1,0 +1,233 @@
+---
+# Requires _prepare.yml re-usable workflow to have run.
+name: Build for macOS
+on:
+  workflow_call:
+    inputs:
+      artifact_prefix:
+        description: Artifact prefix
+        type: string
+        required: false
+      os:
+        description: GitHub Actions runner OS
+        type: string
+        required: true
+      git_ref:
+        description: Git ref to build
+        type: string
+        required: true
+      git_sha:
+        description: Override git SHA to build
+        type: string
+        required: false
+      test_build_name:
+        description: "Test build name"
+        type: string
+        required: false
+      test_release_type:
+        description: "prerelease or draft"
+        type: string
+        required: false
+        default: "prerelease"
+    secrets:
+      APPLE_DEVELOPER_CERTIFICATE_P12_BASE64:
+        description: Base64 encoded Apple Developer Certificate
+        required: true
+      APPLE_DEVELOPER_CERTIFICATE_PASSWORD:
+        description: Password for Apple Developer Certificate
+        required: true
+      KEYCHAIN_PASSWORD:
+        description: Password to use for temporary local keychain on runner
+        required: true
+      AC_USERNAME:
+        description: Apple Connect Username
+        required: true
+      AC_PASSWORD:
+        description: Apple Connect Password
+        required: true
+      AC_PROVIDER:
+        description: Apple Connect Provider
+        required: true
+      AC_SIGN_IDENTITY:
+        description: Apple Connect Signing Identify
+        required: true
+      TAP_REPO_TOKEN:
+        description: Homebrew Tap Token
+        required: true
+
+jobs:
+  prepare:
+    runs-on: ${{ inputs.os }}
+    outputs:
+      builder_sha: ${{ steps.builder_sha.outputs.sha }}
+      emacs_sha_override: ${{ steps.emacs_sha.outputs.sha }}
+      test_plan_args: ${{ steps.test_plan_args.outputs.args }}
+    steps:
+      - name: Download emacs-builder git SHA artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: emacs-builder-git-sha
+          path: ./
+      - name: Store builder Git SHA
+        id: builder_sha
+        run: >-
+          echo "::set-output name=sha::$(cat emacs-builder-git-sha.txt)"
+      - name: Prepare plan test args
+        id: test_plan_args
+        if: ${{ inputs.test_build_name != '' }}
+        run: >-
+          echo "::set-output name=args::--test-build '${{ inputs.test_build_name }}' --test-release-type '${{ inputs.test_release_type }}'"
+      - name: Set git SHA override
+        id: emacs_sha
+        if: ${{ inputs.git_sha != '' }}
+        run: >-
+          echo "::set-output name=sha::--sha '${{ inputs.git_sha }}'"
+
+  plan:
+    needs: [prepare]
+    runs-on: ${{ inputs.os }}
+    outputs:
+      check: ${{ steps.check.outputs.result }}
+    steps:
+      - name: Download pre-built emacs-builder artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: emacs-builder
+          path: bin
+      - name: Ensure emacs-builder is executable
+        run: chmod +x bin/emacs-builder
+      - name: Plan build
+        run: >-
+          bin/emacs-builder -l debug plan --output build-plan.yml
+          --output-dir '${{ github.workspace }}/builds'
+          ${{ needs.prepare.outputs.test_plan_args }}
+          ${{ needs.prepare.outputs.emacs_sha_override }}
+          '${{ inputs.git_ref }}'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Show plan
+        run: cat build-plan.yml
+      - name: Upload build-plan.yml artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ inputs.artifact_prefix }}build-plan.yml
+          path: build-plan.yml
+          if-no-files-found: error
+      - name: Check if planned release and asset already exist
+        id: check
+        continue-on-error: true
+        run: |
+          RESULT="$((bin/emacs-builder -l debug release --plan build-plan.yml check && echo 'ok') || echo 'fail')"
+          echo "::set-output name=result::$RESULT"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build:
+    runs-on: ${{ inputs.os }}
+    needs: [prepare, plan]
+    # Only run if check for existing release and asset failed.
+    if: ${{ needs.plan.outputs.check == 'fail' }}
+    steps:
+      - name: Checkout build-emacs-for-macos repo
+        uses: actions/checkout@v2
+        with:
+          repository: jimeh/build-emacs-for-macos
+          ref: ${{ needs.prepare.outputs.builder_sha }}
+          path: builder
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+      - name: Install dependencies
+        run: make bootstrap-ci
+        working-directory: builder
+      - name: Download build-plan.yml artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ inputs.artifact_prefix }}build-plan.yml
+          path: ./
+      - name: Build Emacs
+        run: >-
+          ./builder/build-emacs-for-macos --plan build-plan.yml
+          --no-relink-eln-files --native-full-aot
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload unsigned app artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ inputs.artifact_prefix }}unsigned-app
+          path: builds/*.tbz
+          if-no-files-found: error
+
+  package:
+    runs-on: ${{ inputs.os }}
+    needs: [prepare, plan, build]
+    # Only run if check for existing release and asset failed.
+    steps:
+      - name: Install dependencies
+        run: |
+          brew install python
+          $(command -v pip3 || command -v pip) install --upgrade dmgbuild
+      - name: Download pre-built emacs-builder artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: emacs-builder
+          path: bin
+      - name: Ensure emacs-builder is executable
+        run: chmod +x bin/emacs-builder
+      - name: Download build-plan.yml artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ inputs.artifact_prefix }}build-plan.yml
+          path: ./
+      - name: Download unsigned app artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ inputs.artifact_prefix }}unsigned-app
+          path: builds
+      - name: Extract unsigned app archive
+        run: |
+          find * -name '*.tbz' -exec tar xvjf "{}" \;
+        working-directory: builds
+      - name: Install the Apple signing certificate
+        run: |
+          # create variables
+          CERTIFICATE_PATH="$RUNNER_TEMP/build_certificate.p12"
+          KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
+
+          # import certificate and provisioning profile from secrets
+          echo -n "$CERT_BASE64" | base64 --decode --output "$CERTIFICATE_PATH"
+
+          # create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+          # import certificate to keychain
+          security import "$CERTIFICATE_PATH" -P "$CERT_PASSWORD" -A \
+            -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH"
+        env:
+          CERT_BASE64: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_P12_BASE64 }}
+          CERT_PASSWORD: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      - name: Sign, package and notarize build
+        run: >-
+          bin/emacs-builder -l debug package -v --plan build-plan.yml
+          --sign --remove-source-dir
+        env:
+          AC_USERNAME: ${{ secrets.AC_USERNAME }}
+          AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+          AC_PROVIDER: ${{ secrets.AC_PROVIDER }}
+          AC_SIGN_IDENTITY: ${{ secrets.AC_SIGN_IDENTITY }}
+      - name: Upload disk image artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: dmg
+          path: |
+            builds/*.dmg
+            builds/*.sha*
+          if-no-files-found: error
+      - name: Clean up keychain used for signing certificate
+        if: ${{ always() }}
+        run: |
+          security delete-keychain "$RUNNER_TEMP/app-signing.keychain-db"

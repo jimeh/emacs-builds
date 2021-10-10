@@ -1,0 +1,53 @@
+---
+name: Prepare
+on:
+  workflow_call:
+    inputs:
+      builder_ref:
+        description: Git ref to checkout of build-emacs-for-macos
+        required: true
+        type: string
+    secrets:
+      TAP_REPO_TOKEN:
+        description: Personal Access Token for Homebrew Tap repo
+        required: true
+
+jobs:
+  emacs-builder:
+    # Use oldest version of macOS to ensure emacs-bulder binary is compatible
+    # with later versions of macOS.
+    runs-on: macos-10.15
+    steps:
+      - name: Checkout build-emacs-for-macos repo
+        uses: actions/checkout@v2
+        with:
+          repository: jimeh/build-emacs-for-macos
+          ref: ${{ inputs.builder_ref }}
+          path: builder
+      - name: Store builder Git SHA
+        run: |
+          git rev-parse HEAD > emacs-builder-git-sha.txt
+        working-directory: builder
+      - name: Upload builder git SHA artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: emacs-builder-git-sha
+          path: builder/emacs-builder-git-sha.txt
+          if-no-files-found: error
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('builder/**/go.sum') }}
+          restore-keys: ${{ runner.os }}-go-
+      - name: Build emacs-builder tool
+        run: make build
+        working-directory: builder
+      - name: Upload emacs-builder artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: emacs-builder
+          path: builder/bin/emacs-builder
+          if-no-files-found: error

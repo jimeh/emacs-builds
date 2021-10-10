@@ -1,0 +1,52 @@
+---
+# Requires _prepare.yml and _build.yml re-usable workflows to have run.
+name: Release
+on:
+  workflow_call:
+    inputs:
+      plan_artifact:
+        description: Name of artifact containing a emacs-builder plan.yml file
+        type: string
+        required: true
+      dmg_artifact:
+        description: Name of artifact containing a *.dmg files to release
+        type: string
+        required: true
+    secrets:
+      TAP_REPO_TOKEN:
+        description: Personal Access Token for Homebrew Tap repo
+        required: true
+
+jobs:
+  github:
+    runs-on: macos-11
+    steps:
+      - name: Download pre-built emacs-builder artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: emacs-builder
+          path: bin
+      - name: Ensure emacs-builder is executable
+        run: chmod +x bin/emacs-builder
+      - name: Download build-plan.yml artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ inputs.plan_artifact }}
+          path: ./
+      - name: Download disk image artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ inputs.dmg_artifact }}
+          path: builds
+      - name: Publish disk images to a GitHub Release
+        run: >-
+          bin/emacs-builder -l debug release --plan build-plan.yml publish
+          $(find builds -name '*.dmg' -or -name '*.sha256')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Trigger update casks workflow in homebrew tap
+        if: ${{ inputs.testBuildName == '' }}
+        run: >-
+          gh workflow run --repo jimeh/homebrew-emacs-builds update-casks.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
