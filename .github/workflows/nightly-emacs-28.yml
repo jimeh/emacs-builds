@@ -41,7 +41,7 @@ jobs:
     needs: [build]
     uses: jimeh/emacs-builds/.github/workflows/_release.yml@main
     with:
-      plan_artifact: catalina_build-plan.yml
+      plan_artifact: build-plan
       dmg_artifact: dmg
     secrets:
       TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}

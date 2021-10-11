@@ -107,10 +107,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Show plan
         run: cat build-plan.yml
-      - name: Upload build-plan.yml artifact
+      - name: Upload build-plan artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ inputs.artifact_prefix }}build-plan.yml
+          name: ${{ inputs.artifact_prefix }}build-plan
           path: build-plan.yml
           if-no-files-found: error
       - name: Check if planned release and asset already exist
@@ -140,10 +140,10 @@ jobs:
       - name: Install dependencies
         run: make bootstrap-ci
         working-directory: builder
-      - name: Download build-plan.yml artifact
+      - name: Download build-plan artifact
         uses: actions/download-artifact@v2
         with:
-          name: ${{ inputs.artifact_prefix }}build-plan.yml
+          name: ${{ inputs.artifact_prefix }}build-plan
           path: ./
       - name: Build Emacs
         run: >-
@@ -174,10 +174,10 @@ jobs:
           path: bin
       - name: Ensure emacs-builder is executable
         run: chmod +x bin/emacs-builder
-      - name: Download build-plan.yml artifact
+      - name: Download build-plan artifact
         uses: actions/download-artifact@v2
         with:
-          name: ${{ inputs.artifact_prefix }}build-plan.yml
+          name: ${{ inputs.artifact_prefix }}build-plan
           path: ./
       - name: Download unsigned app artifact
         uses: actions/download-artifact@v2

@@ -5,7 +5,7 @@ on:
   workflow_call:
     inputs:
       plan_artifact:
-        description: Name of artifact containing a emacs-builder plan.yml file
+        description: Name of artifact containing a emacs-builder plan yaml file
         type: string
         required: true
       dmg_artifact:
