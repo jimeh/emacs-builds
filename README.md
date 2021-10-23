@@ -95,13 +95,19 @@ any issues.
    brew tap jimeh/emacs-builds
    ```
 2. Install one of the available casks:
-   - `emacs-app-nightly` for the latest nightly build:
+   - `emacs-app-nightly` for the latest nightly build from Emacs' `master`
+     branch:
      ```
      brew install --cask emacs-app-nightly
      ```
    - `emacs-app-good` for the latest known good nightly build listed on [#7][7]:
      ```
      brew install --cask emacs-app-good
+     ```
+   - `emacs-app-nightly-28` for the latest Emacs 28.x nightly build from the
+     `emacs-28` branch:
+     ```
+     brew install --cask emacs-app-nightly-28
      ```
    - `emacs-app` for the latest stable release of Emacs (does not include
      native-comp at time of writing):
