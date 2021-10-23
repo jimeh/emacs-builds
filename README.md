@@ -10,11 +10,11 @@
   <a href="https://github.com/jimeh/emacs-builds/releases/latest">
     <img alt="GitHub release (stable)" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjimeh%2Fhomebrew-emacs-builds%2Fmeta%2FCasks%2Femacs-app%2Fshield.json">
   </a>
-  <a href="https://github.com/jimeh/emacs-builds/issues/7">
+  <a href="https://github.com/jimeh/emacs-builds/releases?q=emacs-28&expanded=true">
     <img alt="GitHub release (nightly@emacs-28)" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjimeh%2Fhomebrew-emacs-builds%2Fmeta%2FCasks%2Femacs-app-nightly-28%2Fshield.json">
   </a>
   <br />
-  <a href="https://github.com/jimeh/emacs-builds/releases">
+  <a href="https://github.com/jimeh/emacs-builds/releases?q=master&expanded=true">
     <img alt="GitHub release (nightly)" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjimeh%2Fhomebrew-emacs-builds%2Fmeta%2FCasks%2Femacs-app-nightly%2Fshield.json">
   </a>
   <a href="https://github.com/jimeh/emacs-builds/issues/7">
