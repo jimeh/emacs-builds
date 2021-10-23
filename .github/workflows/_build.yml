@@ -157,6 +157,11 @@ jobs:
           name: ${{ inputs.artifact_prefix }}unsigned-app
           path: builds/*.tbz
           if-no-files-found: error
+      - name: Upload Emacs source artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ inputs.artifact_prefix }}emacs-source
+          path: tarballs/*.tgz
 
   package:
     runs-on: ${{ inputs.os }}
