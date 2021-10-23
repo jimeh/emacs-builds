@@ -13,8 +13,6 @@ jobs:
   prepare:
     name: Prepare
     uses: jimeh/emacs-builds/.github/workflows/_prepare.yml@main
-    with:
-      builder_ref: v0.6.17
     secrets:
       TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
 
