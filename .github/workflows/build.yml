@@ -14,6 +14,10 @@ on:
         description: "Git ref to checkout of build-emacs-for-macos"
         required: true
         default: "master"
+      builder_args:
+        description: Custom arguments passed to build script
+        required: false
+        default: ""
       os:
         description: 'Runner OS ("macos-10.15" or "macos-11")'
         required: true
@@ -44,6 +48,7 @@ jobs:
       os: macos-10.15
       git_ref: ${{ github.event.inputs.git_ref }}
       git_sha: ${{ github.event.inputs.git_sha }}
+      build_args: ${{ github.event.inputs.builder_args }}
       test_build_name: ${{ github.event.inputs.test_build_name }}
       test_release_type: ${{ github.event.inputs.test_release_type }}
     secrets:

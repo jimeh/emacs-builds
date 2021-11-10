@@ -20,6 +20,10 @@ on:
         description: Override git SHA to build
         type: string
         required: false
+      build_args:
+        description: Custom arguments passed to build script
+        type: string
+        required: false
       test_build_name:
         description: "Test build name"
         type: string
@@ -149,6 +153,7 @@ jobs:
         run: >-
           ./builder/build-emacs-for-macos --plan build-plan.yml
           --no-relink-eln-files --native-full-aot
+          ${{ inputs.build_args }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload unsigned app artifact
