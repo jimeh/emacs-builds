@@ -7,7 +7,7 @@ on:
         description: Git ref to checkout of build-emacs-for-macos
         required: false
         type: string
-        default: "v0.6.21"
+        default: "v0.6.22"
     secrets:
       TAP_REPO_TOKEN:
         description: Personal Access Token for Homebrew Tap repo
