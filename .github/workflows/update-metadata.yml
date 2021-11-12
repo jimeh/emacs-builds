@@ -3,7 +3,7 @@ name: Update Metadata
 concurrency: jimeh/emacs-builds/update-metadata
 on:
   schedule:
-    - cron: "0 * * * *"
+    - cron: "0 0,12 * * *"
   workflow_dispatch:
 
 jobs:
