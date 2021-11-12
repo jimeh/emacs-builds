@@ -152,7 +152,7 @@ jobs:
       - name: Build Emacs
         run: >-
           ./builder/build-emacs-for-macos --plan build-plan.yml
-          --no-relink-eln-files --native-full-aot --posix-spawn
+          --no-relink-eln-files --native-full-aot
           ${{ inputs.build_args }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
