@@ -166,7 +166,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ inputs.artifact_prefix }}emacs-source
-          path: tarballs/*.tgz
+          path: builder/tarballs/*.tgz
 
   package:
     runs-on: ${{ inputs.os }}
