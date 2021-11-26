@@ -24,6 +24,7 @@ jobs:
       os: macos-10.15
       git_ref: emacs-28
       git_sha: ${{ github.event.inputs.git_sha }}
+      build_args: --no-relink-eln-files
     secrets:
       APPLE_DEVELOPER_CERTIFICATE_P12_BASE64: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_P12_BASE64 }}
       APPLE_DEVELOPER_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_PASSWORD }}
