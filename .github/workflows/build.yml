@@ -17,7 +17,7 @@ on:
       builder_args:
         description: Custom arguments passed to build script
         required: false
-        default: "--no-relink-eln-files"
+        default: ""
       os:
         description: 'Runner OS ("macos-10.15" or "macos-11")'
         required: true
