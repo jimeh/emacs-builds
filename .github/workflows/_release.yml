@@ -34,19 +34,24 @@ jobs:
           name: ${{ inputs.plan_artifact }}
           path: ./
       - name: Download disk image artifacts
+        id: dmg
+        continue-on-error: true
         uses: actions/download-artifact@v2
         with:
           name: ${{ inputs.dmg_artifact }}
           path: builds
       - name: Publish disk images to a GitHub Release
+        if: ${{ steps.dmg.outputs.result == 'success' }}
         run: >-
           bin/emacs-builder -l debug release --plan build-plan.yml publish
           $(find builds -name '*.dmg' -or -name '*.sha256')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Trigger update casks workflow in homebrew tap
-        if: ${{ inputs.testBuildName == '' }}
+        if: ${{ steps.dmg.outputs.result == 'success' && inputs.testBuildName == '' }}
         run: >-
           gh workflow run --repo jimeh/homebrew-emacs-builds update-casks.yml
         env:
           GITHUB_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
+      - run: echo 'No DMG artifact available, was there a new commit to build?'
+        if: ${{ steps.dmg.outputs.result == 'fail' }}

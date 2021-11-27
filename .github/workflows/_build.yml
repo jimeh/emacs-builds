@@ -125,6 +125,8 @@ jobs:
           echo "::set-output name=result::$RESULT"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo 'Planned release already seems to exist.'
+        if: ${{ steps.check.outputs.result == 'fail' }}
 
   build:
     runs-on: ${{ inputs.os }}
