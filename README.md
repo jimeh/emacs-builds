@@ -20,15 +20,14 @@
 
 <p align="center">
   <strong>
-    Self-contained Emacs.app builds for macOS, with native-compilation support
-    in nightly builds.
+    Self-contained Emacs.app builds for macOS, with native-compilation support.
   </strong>
 </p>
 
 ## Features
 
 - Self-contained Emacs.app application bundle, with no external dependencies.
-- Native-compilation ([gccemacs][]), nightly builds only.
+- Native compilation ([gccemacs][]), only in Emacs 28.x and later builds.
 - Native JSON parsing via libjansson.
 - SVG rendering via librsvg.
 - Various image formats are supported via macOS native image APIs.
@@ -56,9 +55,8 @@
 
 ## System Requirements
 
-- macOS 10.15.x or later (uses Rosetta2 on M1-based macs).
-- Homebrew `gcc` formula (nightly builds only).
-- Xcode Command Line Tools (nightly builds only).
+- macOS 10.15.x or later (uses Rosetta2 on Apple Silicon machines).
+- Xcode Command Line Tools for native compilation (Emacs 28.x and later).
 
 ## Installation
 
@@ -67,10 +65,10 @@
 See the [Releases][] page to download latest builds, or [here](latest) for the
 latest stable release.
 
-Nightly builds of Emacs are for the part just fine, but if you don't like living
-too close to the edge, see issue [#7 Known Good Nightly Builds][7] for a list of
-recent nightly builds which have been actively used by a living being without
-any issues.
+Nightly builds of Emacs are for the most part just fine, but if you don't like
+living too close to the edge, see issue [#7 Known Good Nightly Builds][7] for a
+list of recent nightly builds which have been actively used by a living being
+for a day or two without any obvious issues.
 
 [releases]: https://github.com/jimeh/emacs-builds/releases
 [latest]: https://github.com/jimeh/emacs-builds/releases/latest
@@ -155,6 +153,7 @@ Actions.
   https://github.com/jimeh/emacs-builds/blob/main/.github/workflows/build.yml
 
 Full history for all builds is available on GitHub Actions [here][actions].
+Build logs are only retained by GitHub for 90 days though.
 
 [actions]: https://github.com/jimeh/emacs-builds/actions
 
