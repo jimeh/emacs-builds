@@ -82,8 +82,8 @@ for a day or two without any obvious issues.
    brew tap jimeh/emacs-builds
    ```
 2. Install one of the available casks:
-   - `emacs-app` for the latest stable release of Emacs (does not include
-     native-comp at time of writing):
+   - `emacs-app` for the latest stable release of Emacs (includes native-comp
+     since emacs-28.1):
      ```
      brew install --cask emacs-app
      ```
