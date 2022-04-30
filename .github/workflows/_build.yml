@@ -143,6 +143,8 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
+      - name: Update homebrew
+        run: brew update
       - name: Install dependencies
         run: make bootstrap-ci
         working-directory: builder
