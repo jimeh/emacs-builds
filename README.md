@@ -54,7 +54,7 @@
 
 ## System Requirements
 
-- macOS 10.15.x or later (uses Rosetta2 on Apple Silicon machines).
+- macOS 11.x (Big Sur) or later (uses Rosetta2 on Apple Silicon machines).
 - Xcode Command Line Tools for native compilation (Emacs 28.x and later).
 
 ## Installation
@@ -147,8 +147,8 @@ use the alias from the above example.
 ## Build Process
 
 Building Emacs is done using the [jimeh/build-emacs-for-macos][] build script,
-executed within a GitHub Actions [workflow][]. This is why macOS 10.15.x or
-later is required, as it's the oldest version of macOS available in GitHub
+executed within a GitHub Actions [workflow][]. This is why macOS 11.x (Big Sur)
+or later is required, as it's the oldest version of macOS available in GitHub
 Actions.
 
 [jimeh/build-emacs-for-macos]: https://github.com/jimeh/build-emacs-for-macos

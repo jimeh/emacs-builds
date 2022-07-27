@@ -19,9 +19,9 @@ on:
         required: false
         default: ""
       os:
-        description: 'Runner OS ("macos-10.15" or "macos-11")'
+        description: 'Runner OS ("macos-11", "macos-12", or "macos-latest")'
         required: true
-        default: "macos-10.15"
+        default: "macos-11"
       test_build_name:
         description: "Test build name"
         required: false
@@ -45,7 +45,7 @@ jobs:
     needs: [prepare]
     uses: jimeh/emacs-builds/.github/workflows/_build.yml@main
     with:
-      os: macos-10.15
+      os: ${{ github.event.inputs.os }}
       git_ref: ${{ github.event.inputs.git_ref }}
       git_sha: ${{ github.event.inputs.git_sha }}
       build_args: ${{ github.event.inputs.builder_args }}
