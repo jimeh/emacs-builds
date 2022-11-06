@@ -68,25 +68,24 @@ jobs:
       test_plan_args: ${{ steps.test_plan_args.outputs.args }}
     steps:
       - name: Download emacs-builder git SHA artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: emacs-builder-git-sha
           path: ./
       - name: Store builder Git SHA
         id: builder_sha
         run: >-
-          echo "::set-output name=sha::$(cat emacs-builder-git-sha.txt)"
+          echo "sha=$(cat emacs-builder-git-sha.txt)" >> $GITHUB_OUTPUT
       - name: Prepare plan test args
         id: test_plan_args
         if: ${{ inputs.test_build_name != '' }}
         run: >-
-          echo "::set-output name=args::--test-build '${{ inputs.test_build_name }}' --test-release-type '${{ inputs.test_release_type }}'"
+          echo "args=--test-build '${{ inputs.test_build_name }}' --test-release-type '${{ inputs.test_release_type }}'" >> $GITHUB_OUTPUT
       - name: Set git SHA override
         id: emacs_sha
         if: ${{ inputs.git_sha != '' }}
         run: >-
-          echo "::set-output name=sha::--sha '${{ inputs.git_sha }}'"
-
+          echo "sha=--sha '${{ inputs.git_sha }}'" >> $GITHUB_OUTPUT
   plan:
     needs: [prepare]
     runs-on: ${{ inputs.os }}
@@ -94,7 +93,7 @@ jobs:
       check: ${{ steps.check.outputs.result }}
     steps:
       - name: Download pre-built emacs-builder artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: emacs-builder
           path: bin
@@ -112,7 +111,7 @@ jobs:
       - name: Show plan
         run: cat build-plan.yml
       - name: Upload build-plan artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ inputs.artifact_prefix }}build-plan
           path: build-plan.yml
@@ -121,8 +120,7 @@ jobs:
         id: check
         continue-on-error: true
         run: |
-          RESULT="$((bin/emacs-builder -l debug release --plan build-plan.yml check && echo 'ok') || echo 'fail')"
-          echo "::set-output name=result::$RESULT"
+          echo "result=$((bin/emacs-builder -l debug release --plan build-plan.yml check && echo 'ok') || echo 'fail')" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: echo 'Planned release already seems to exist.'
@@ -149,7 +147,7 @@ jobs:
         run: make bootstrap-ci
         working-directory: builder
       - name: Download build-plan artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: ${{ inputs.artifact_prefix }}build-plan
           path: ./
@@ -161,13 +159,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload unsigned app artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ inputs.artifact_prefix }}unsigned-app
           path: builds/*.tbz
           if-no-files-found: error
       - name: Upload Emacs source artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ inputs.artifact_prefix }}emacs-source
           path: builder/tarballs/*.tgz
@@ -177,24 +175,26 @@ jobs:
     needs: [prepare, plan, build]
     # Only run if check for existing release and asset failed.
     steps:
-      - name: Install dependencies
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install dmgbuild
         run: |
-          brew install python
           $(command -v pip3 || command -v pip) install --upgrade dmgbuild
       - name: Download pre-built emacs-builder artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: emacs-builder
           path: bin
       - name: Ensure emacs-builder is executable
         run: chmod +x bin/emacs-builder
       - name: Download build-plan artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: ${{ inputs.artifact_prefix }}build-plan
           path: ./
       - name: Download unsigned app artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: ${{ inputs.artifact_prefix }}unsigned-app
           path: builds
@@ -234,7 +234,7 @@ jobs:
           AC_PROVIDER: ${{ secrets.AC_PROVIDER }}
           AC_SIGN_IDENTITY: ${{ secrets.AC_SIGN_IDENTITY }}
       - name: Upload disk image artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: dmg
           path: |

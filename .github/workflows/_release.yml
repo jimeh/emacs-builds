@@ -22,21 +22,21 @@ jobs:
     runs-on: macos-11
     steps:
       - name: Download pre-built emacs-builder artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: emacs-builder
           path: bin
       - name: Ensure emacs-builder is executable
         run: chmod +x bin/emacs-builder
       - name: Download build-plan.yml artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: ${{ inputs.plan_artifact }}
           path: ./
       - name: Download disk image artifacts
         id: dmg
         continue-on-error: true
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: ${{ inputs.dmg_artifact }}
           path: builds
