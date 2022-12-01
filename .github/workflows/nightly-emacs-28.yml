@@ -12,14 +12,14 @@ on:
 jobs:
   prepare:
     name: Prepare
-    uses: jimeh/emacs-builds/.github/workflows/_prepare.yml@main
+    uses: ./.github/workflows/_prepare.yml
     secrets:
       TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
 
   build:
     name: Build
     needs: [prepare]
-    uses: jimeh/emacs-builds/.github/workflows/_build.yml@main
+    uses: ./.github/workflows/_build.yml
     with:
       os: macos-11
       git_ref: emacs-28
@@ -38,7 +38,7 @@ jobs:
   release:
     name: Release
     needs: [build]
-    uses: jimeh/emacs-builds/.github/workflows/_release.yml@main
+    uses: ./.github/workflows/_release.yml
     with:
       plan_artifact: build-plan
       dmg_artifact: dmg

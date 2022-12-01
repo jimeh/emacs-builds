@@ -34,7 +34,7 @@ on:
 jobs:
   prepare:
     name: Prepare
-    uses: jimeh/emacs-builds/.github/workflows/_prepare.yml@main
+    uses: ./.github/workflows/_prepare.yml
     with:
       builder_ref: ${{ github.event.inputs.builder_ref }}
     secrets:
@@ -43,7 +43,7 @@ jobs:
   build:
     name: Build
     needs: [prepare]
-    uses: jimeh/emacs-builds/.github/workflows/_build.yml@main
+    uses: ./.github/workflows/_build.yml
     with:
       os: ${{ github.event.inputs.os }}
       git_ref: ${{ github.event.inputs.git_ref }}
@@ -64,7 +64,7 @@ jobs:
   release:
     name: Release
     needs: [build]
-    uses: jimeh/emacs-builds/.github/workflows/_release.yml@main
+    uses: ./.github/workflows/_release.yml
     with:
       plan_artifact: build-plan
       dmg_artifact: dmg
