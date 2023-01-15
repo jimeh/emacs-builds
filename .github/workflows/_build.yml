@@ -143,9 +143,17 @@ jobs:
           ruby-version: 2.7
       - name: Update homebrew
         run: brew update
+      - name: Fix system python breaking homebrew
+        run: >-
+          find /usr/local/bin -type l
+          -ilname '*/Library/Frameworks/Python.framework/*'
+          -delete
       - name: Install dependencies
         run: make bootstrap-ci
         working-directory: builder
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: "1"
+          HOMEBREW_NO_INSTALL_CLEANUP: "1"
       - name: Download build-plan artifact
         uses: actions/download-artifact@v3
         with:
