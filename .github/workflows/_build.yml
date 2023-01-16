@@ -151,9 +151,6 @@ jobs:
       - name: Install dependencies
         run: make bootstrap-ci
         working-directory: builder
-        env:
-          HOMEBREW_NO_AUTO_UPDATE: "1"
-          HOMEBREW_NO_INSTALL_CLEANUP: "1"
       - name: Download build-plan artifact
         uses: actions/download-artifact@v3
         with:
