@@ -10,7 +10,7 @@
   <a href="https://github.com/jimeh/emacs-builds/releases/latest"><img alt="GitHub release (stable)" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjimeh%2Fhomebrew-emacs-builds%2Fmeta%2FCasks%2Femacs-app%2Fshield.json"></a>
   <a href="https://github.com/jimeh/emacs-builds/releases?q=pretest&expanded=true"><img alt="GitHub release (pretest)" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjimeh%2Fhomebrew-emacs-builds%2Fmeta%2FCasks%2Femacs-app-pretest%2Fshield.json"></a>
   <a href="https://github.com/jimeh/emacs-builds/releases?q=master&expanded=true"><img alt="GitHub release (nightly)" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjimeh%2Fhomebrew-emacs-builds%2Fmeta%2FCasks%2Femacs-app-nightly%2Fshield.json"></a>
-  <a href="https://github.com/jimeh/emacs-builds/releases?q=emacs-28&expanded=true"><img alt="GitHub release (nightly@emacs-28)" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjimeh%2Fhomebrew-emacs-builds%2Fmeta%2FCasks%2Femacs-app-nightly-28%2Fshield.json"></a>
+  <a href="https://github.com/jimeh/emacs-builds/releases?q=emacs-29&expanded=true"><img alt="GitHub release (nightly@emacs-29)" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjimeh%2Fhomebrew-emacs-builds%2Fmeta%2FCasks%2Femacs-app-nightly-29%2Fshield.json"></a>
   <a href="https://github.com/jimeh/emacs-builds/issues/7"><img alt="GitHub release (known good nightly)" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjimeh%2Fhomebrew-emacs-builds%2Fmeta%2FCasks%2Femacs-app-good%2Fshield.json"></a>
   <a href="https://github.com/jimeh/emacs-builds/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/jimeh/emacs-builds?style=flat&logo=github&logoColor=white"></a>
   <a href="https://github.com/jimeh/emacs-builds/pulls"><img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr-raw/jimeh/emacs-builds?style=flat&logo=github&logoColor=white"></a>
@@ -100,10 +100,10 @@ for a day or two without any obvious issues.
      ```
      brew install --cask emacs-app-good
      ```
-   - `emacs-app-nightly-28` for the latest Emacs 28.x nightly build from the
-     `emacs-28` branch:
+   - `emacs-app-nightly-29` for the latest Emacs 29.x nightly build from the
+     `emacs-29` branch:
      ```
-     brew install --cask emacs-app-nightly-28
+     brew install --cask emacs-app-nightly-29
      ```
 
 [7]: https://github.com/jimeh/emacs-builds/issues/7
