@@ -34,8 +34,8 @@
   browser with `M-x xwidget-webkit-browse-url`.
 - Native XML parsing via libxml2.
 - Dynamic module loading.
-- Includes the [fix-window-role][] and [system-appearance][] patches from the
-  excellent [emacs-plus][] project.
+- Includes the [fix-window-role][], [system-appearance][], and
+  [round-undecorated-frame][] patches from the excellent [emacs-plus][] project.
 - Emacs source is fetched from the [emacs-mirror/emacs][] GitHub repository.
 - Build creation is transparent and public through the use of GitHub Actions,
   allowing anyone to inspect git commit SHAs, full source code, and exact
@@ -49,6 +49,8 @@
   https://github.com/d12frosted/homebrew-emacs-plus/blob/master/patches/emacs-28/fix-window-role.patch
 [system-appearance]:
   https://github.com/d12frosted/homebrew-emacs-plus/blob/master/patches/emacs-28/system-appearance.patch
+[round-undecorated-frame]:
+  https://github.com/d12frosted/homebrew-emacs-plus/blob/master/patches/emacs-29/round-undecorated-frame.patch
 [emacs-plus]: https://github.com/d12frosted/homebrew-emacs-plus
 [emacs-mirror/emacs]: https://github.com/emacs-mirror/emacs
 
