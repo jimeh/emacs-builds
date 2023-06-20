@@ -63,13 +63,13 @@
 
 ### Manual Download
 
-See the [Releases][] page to download latest builds, or [here](latest) for the
+See the [Releases][] page to download latest builds, or [here][latest] for the
 latest stable release.
 
 Nightly builds of Emacs are for the most part just fine, but if you don't like
 living too close to the edge, see issue [#7 Known Good Nightly Builds][7] for a
 list of recent nightly builds which have been actively used by a living being
-for a day or two without any obvious issues.
+for at least a day or two without any obvious issues.
 
 [releases]: https://github.com/jimeh/emacs-builds/releases
 [latest]: https://github.com/jimeh/emacs-builds/releases/latest
@@ -162,7 +162,7 @@ Build logs are only retained by GitHub for 90 days though.
 
 [actions]: https://github.com/jimeh/emacs-builds/actions
 
-Nightly builds are scheduled for 0:00 UTC every night, based on the latest
+Nightly builds are scheduled for 23:00 UTC every night, based on the latest
 commit from the `master` branch of the [emacs-mirror/emacs][] repository. This
 means a nightly build will only be produced if there have been new commits since
 the last nightly build.
