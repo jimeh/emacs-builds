@@ -110,7 +110,7 @@ func badgesDownloadsAction(c *cli.Context) error {
 
 	count := 0
 
-	for page := 1; page > 0; {
+	for page := 1; page > 0 && page < 11; {
 		releases, resp, err := gh.Repositories.ListReleases(
 			c.Context, owner, repo, &github.ListOptions{
 				Page:    page,
