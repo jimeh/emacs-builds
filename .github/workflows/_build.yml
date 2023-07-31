@@ -158,7 +158,9 @@ jobs:
           path: ./
       - name: Build Emacs
         run: >-
-          ./builder/build-emacs-for-macos --plan build-plan.yml
+          ./builder/build-emacs-for-macos
+          --log-level debug
+          --plan build-plan.yml
           --native-full-aot
           ${{ inputs.build_args }}
         env:
