@@ -133,14 +133,14 @@ jobs:
     if: ${{ needs.plan.outputs.check == 'fail' }}
     steps:
       - name: Checkout build-emacs-for-macos repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: jimeh/build-emacs-for-macos
           ref: ${{ needs.prepare.outputs.builder_sha }}
           path: builder
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7
+          ruby-version: "3.2"
       - name: Update homebrew
         run: brew update
       - name: Fix system python breaking homebrew
