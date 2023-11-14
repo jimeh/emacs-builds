@@ -3,6 +3,10 @@ name: _prepare
 on:
   workflow_call:
     inputs:
+      os:
+        description: GitHub Actions runner OS
+        type: string
+        required: true
       builder_ref:
         description: Git ref to checkout of build-emacs-for-macos
         required: false
@@ -15,9 +19,7 @@ on:
 
 jobs:
   emacs-builder:
-    # Use oldest version of macOS to ensure emacs-bulder binary is compatible
-    # with later versions of macOS.
-    runs-on: macos-11
+    runs-on: ${{ inputs.os }}
     steps:
       - name: Checkout build-emacs-for-macos repo
         uses: actions/checkout@v3

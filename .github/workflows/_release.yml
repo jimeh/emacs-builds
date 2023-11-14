@@ -4,6 +4,10 @@ name: _release
 on:
   workflow_call:
     inputs:
+      os:
+        description: GitHub Actions runner OS
+        type: string
+        required: true
       plan_artifact:
         description: Name of artifact containing a emacs-builder plan yaml file
         type: string
@@ -12,6 +16,10 @@ on:
         description: Name of artifact containing a *.dmg files to release
         type: string
         required: true
+      test_build_name:
+        description: "Test build name"
+        type: string
+        required: false
     secrets:
       TAP_REPO_TOKEN:
         description: Personal Access Token for Homebrew Tap repo
@@ -19,7 +27,7 @@ on:
 
 jobs:
   github:
-    runs-on: macos-11
+    runs-on: ${{ inputs.os }}
     steps:
       - name: Download pre-built emacs-builder artifact
         uses: actions/download-artifact@v3
@@ -48,7 +56,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Trigger update casks workflow in homebrew tap
-        if: ${{ steps.dmg.outputs.result != 'fail' && inputs.testBuildName == '' }}
+        if: ${{ steps.dmg.outputs.result != 'fail' && inputs.test_build_name == '' }}
         run: >-
           gh workflow run --repo jimeh/homebrew-emacs-builds update-casks.yml
         env:

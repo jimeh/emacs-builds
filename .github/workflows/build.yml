@@ -36,6 +36,7 @@ jobs:
     name: Prepare
     uses: ./.github/workflows/_prepare.yml
     with:
+      os: ${{ github.event.inputs.os }}
       builder_ref: ${{ github.event.inputs.builder_ref }}
     secrets:
       TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
@@ -66,7 +67,9 @@ jobs:
     needs: [build]
     uses: ./.github/workflows/_release.yml
     with:
+      os: ${{ github.event.inputs.os }}
       plan_artifact: build-plan
       dmg_artifact: dmg
+      test_build_name: ${{ github.event.inputs.test_build_name }}
     secrets:
       TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
