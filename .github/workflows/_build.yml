@@ -145,7 +145,7 @@ jobs:
         run: brew update
       - name: Fix system python breaking homebrew
         run: >-
-          find /usr/local/bin -type l
+          find "$(brew --prefix)/bin" -type l
           -ilname '*/Library/Frameworks/Python.framework/*'
           -delete
       - name: Install dependencies
