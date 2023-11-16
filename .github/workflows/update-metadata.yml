@@ -16,7 +16,7 @@ jobs:
           ref: meta
       - uses: actions/setup-go@v4
         with:
-          go-version: "1.20"
+          go-version: "1.21"
       - name: update total downloads shield JSON
         run: >-
           go run . badges downloads -o total-downloads/shield.json
