@@ -13,6 +13,8 @@ jobs:
   prepare:
     name: Prepare
     uses: ./.github/workflows/_prepare.yml
+    with:
+      os: macos-11
     secrets:
       TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
 
@@ -40,6 +42,7 @@ jobs:
     needs: [build]
     uses: ./.github/workflows/_release.yml
     with:
+      os: macos-11
       plan_artifact: build-plan
       dmg_artifact: dmg
     secrets:
