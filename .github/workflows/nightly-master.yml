@@ -1,5 +1,5 @@
 ---
-name: Build (master, x86_64)
+name: Nightly (master)
 on:
   schedule:
     - cron: "0 23 2-31 * *"
