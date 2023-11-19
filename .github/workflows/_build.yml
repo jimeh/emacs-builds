@@ -174,7 +174,7 @@ jobs:
           -ilname '*/Library/Frameworks/Python.framework/*'
           -delete
       - name: Install dependencies
-        run: make bootstrap-ci
+        run: make bootstrap
         working-directory: builder
       - name: Download build-plan artifact
         uses: actions/download-artifact@v3
