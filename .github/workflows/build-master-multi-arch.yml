@@ -1,8 +1,8 @@
 ---
-name: Nightly (master)
+name: Build (master, multi-arch)
 on:
   schedule:
-    - cron: "0 23 2-31 * *"
+    - cron: "0 23 1 * *"
   workflow_dispatch:
     inputs:
       git_sha:
@@ -16,8 +16,10 @@ jobs:
     with:
       git_ref: master
       git_sha: ${{ github.event.inputs.git_sha }}
+      builder_ref: "v0.6.43"
+      os: macos-11
       x86_64: true
-      arm64: false
+      arm64: true
     secrets:
       APPLE_DEVELOPER_CERTIFICATE_P12_BASE64: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_P12_BASE64 }}
       APPLE_DEVELOPER_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_PASSWORD }}

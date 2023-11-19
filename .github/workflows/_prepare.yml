@@ -6,13 +6,11 @@ on:
       os:
         description: GitHub Actions runner OS
         type: string
-        required: false
-        default: "macos-11"
+        required: true
       builder_ref:
         description: Git ref to checkout of build-emacs-for-macos
-        required: false
+        required: true
         type: string
-        default: "v0.6.43"
     secrets:
       TAP_REPO_TOKEN:
         description: Personal Access Token for Homebrew Tap repo

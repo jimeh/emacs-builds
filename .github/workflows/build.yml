@@ -44,8 +44,7 @@ on:
     inputs:
       git_ref:
         description: Emacs git ref to build
-        required: false
-        default: "master"
+        required: true
         type: string
       git_sha:
         description: Override Emacs git commit SHA to build
@@ -54,8 +53,7 @@ on:
         type: string
       builder_ref:
         description: "Git ref to checkout of build-emacs-for-macos"
-        required: false
-        default: "master"
+        required: true
         type: string
       builder_args:
         description: Custom arguments passed to build script
@@ -64,8 +62,7 @@ on:
         type: string
       os:
         description: 'Runner OS ("macos-11", "macos-12", or "macos-latest")'
-        required: false
-        default: "macos-11"
+        required: true
         type: string
       test_build_name:
         description: "Test build name"
@@ -79,12 +76,12 @@ on:
         type: string
       x86_64:
         description: "Build x86_64 version of Emacs"
-        required: false
+        required: true
         default: true
         type: boolean
       arm64:
         description: "Build arm64 version of Emacs"
-        required: false
+        required: true
         default: false
         type: boolean
     secrets:
