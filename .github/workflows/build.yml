@@ -22,10 +22,6 @@ on:
         description: 'Runner OS ("macos-11", "macos-12", or "macos-latest")'
         required: true
         default: "macos-11"
-      build_os:
-        description: "Build OS used to build Emacs"
-        required: false
-        default: "macos-11"
       test_build_name:
         description: "Test build name"
         required: false
@@ -37,11 +33,84 @@ on:
       x86_64:
         description: "Build x86_64 version of Emacs"
         required: false
-        default: "true"
+        default: true
+        type: boolean
       arm64:
         description: "Build arm64 version of Emacs"
         required: false
-        default: "false"
+        default: false
+        type: boolean
+  workflow_call:
+    inputs:
+      git_ref:
+        description: Emacs git ref to build
+        required: true
+        default: "master"
+        type: string
+      git_sha:
+        description: Override Emacs git commit SHA to build
+        required: false
+        type: string
+      builder_ref:
+        description: "Git ref to checkout of build-emacs-for-macos"
+        required: true
+        default: "master"
+        type: string
+      builder_args:
+        description: Custom arguments passed to build script
+        required: false
+        default: ""
+        type: string
+      os:
+        description: 'Runner OS ("macos-11", "macos-12", or "macos-latest")'
+        required: true
+        default: "macos-11"
+        type: string
+      test_build_name:
+        description: "Test build name"
+        required: false
+        default: ""
+        type: string
+      test_release_type:
+        description: "prerelease or draft"
+        required: false
+        default: ""
+        type: string
+      x86_64:
+        description: "Build x86_64 version of Emacs"
+        required: false
+        default: true
+        type: boolean
+      arm64:
+        description: "Build arm64 version of Emacs"
+        required: false
+        default: false
+        type: boolean
+    secrets:
+      APPLE_DEVELOPER_CERTIFICATE_P12_BASE64:
+        description: Base64 encoded Apple Developer Certificate
+        required: true
+      APPLE_DEVELOPER_CERTIFICATE_PASSWORD:
+        description: Password for Apple Developer Certificate
+        required: true
+      KEYCHAIN_PASSWORD:
+        description: Password to use for temporary local keychain on runner
+        required: true
+      AC_USERNAME:
+        description: Apple Connect Username
+        required: true
+      AC_PASSWORD:
+        description: Apple Connect Password
+        required: true
+      AC_PROVIDER:
+        description: Apple Connect Provider
+        required: true
+      AC_SIGN_IDENTITY:
+        description: Apple Connect Signing Identify
+        required: true
+      TAP_REPO_TOKEN:
+        description: Homebrew Tap Token
+        required: true
 
 jobs:
   prepare:
@@ -60,11 +129,11 @@ jobs:
   build_x86_64:
     name: Build (x86_64)
     if: ${{ github.event.inputs.x86_64 == 'true' }}
-    needs: [prepare]
     uses: ./.github/workflows/_build.yml
+    needs: [prepare]
     with:
       os: ${{ github.event.inputs.os }}
-      build_os: ${{ github.event.inputs.build_os }}
+      build_os: "macos-11"
       artifact_prefix: "x86_64-"
       git_ref: ${{ github.event.inputs.git_ref }}
       git_sha: ${{ github.event.inputs.git_sha }}
@@ -83,8 +152,9 @@ jobs:
 
   release_x86_64:
     name: Release (x86_64)
-    needs: [build_x86_64]
     uses: ./.github/workflows/_release.yml
+    needs: [build_x86_64]
+    if: ${{ needs.build_x86_64.outputs.package_created }}
     with:
       os: ${{ github.event.inputs.os }}
       plan_artifact: x86_64-build-plan
@@ -100,8 +170,8 @@ jobs:
   build_arm64:
     name: Build (arm64)
     if: ${{ github.event.inputs.arm64 == 'true' }}
-    needs: [prepare]
     uses: ./.github/workflows/_build.yml
+    needs: [prepare]
     with:
       os: ${{ github.event.inputs.os }}
       build_os: "macos-13-xlarge" # Only macos-13-xlarge has arm64 support.
@@ -123,8 +193,9 @@ jobs:
 
   release_arm64:
     name: Release (arm64)
-    needs: [build_arm64]
     uses: ./.github/workflows/_release.yml
+    needs: [build_arm64]
+    if: ${{ needs.build_arm64.outputs.package_created }}
     with:
       os: ${{ github.event.inputs.os }}
       plan_artifact: arm64-build-plan

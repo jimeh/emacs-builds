@@ -1,8 +1,8 @@
 ---
-name: Nightly (master)
+name: Monthly (master)
 on:
   schedule:
-    - cron: "0 23 2-31 * *"
+    - cron: "0 23 1 * *"
   workflow_dispatch:
     inputs:
       git_sha:
@@ -17,7 +17,7 @@ jobs:
       git_ref: master
       git_sha: ${{ github.event.inputs.git_sha }}
       x86_64: true
-      arm64: false
+      arm64: true
     secrets:
       APPLE_DEVELOPER_CERTIFICATE_P12_BASE64: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_P12_BASE64 }}
       APPLE_DEVELOPER_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_PASSWORD }}

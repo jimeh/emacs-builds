@@ -64,6 +64,10 @@ on:
       TAP_REPO_TOKEN:
         description: Homebrew Tap Token
         required: true
+    outputs:
+      package_created:
+        description: "Whether or not a package was created"
+        value: ${{ jobs.package.result == 'success' }}
 
 jobs:
   prepare:
@@ -202,7 +206,6 @@ jobs:
   package:
     runs-on: ${{ inputs.os }}
     needs: [prepare, plan, build]
-    # Only run if check for existing release and asset failed.
     steps:
       - uses: actions/setup-python@v4
         with:
