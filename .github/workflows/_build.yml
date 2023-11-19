@@ -265,7 +265,7 @@ jobs:
       - name: Upload disk image artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: dmg
+          name: ${{ inputs.artifact_prefix }}dmg
           path: |
             builds/*.dmg
             builds/*.sha*

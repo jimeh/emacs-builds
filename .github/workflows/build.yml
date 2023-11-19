@@ -34,6 +34,14 @@ on:
         description: "prerelease or draft"
         required: false
         default: ""
+      x86_64:
+        description: "Build x86_64 version of Emacs"
+        required: false
+        default: "true"
+      arm64:
+        description: "Build arm64 version of Emacs"
+        required: false
+        default: "false"
 
 jobs:
   prepare:
@@ -45,13 +53,19 @@ jobs:
     secrets:
       TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
 
-  build:
-    name: Build
+  # ----------------------------------------------------------------------------
+  # Build x86_64 version of Emacs
+  # ----------------------------------------------------------------------------
+
+  build_x86_64:
+    name: Build (x86_64)
+    if: ${{ github.event.inputs.x86_64 == 'true' }}
     needs: [prepare]
     uses: ./.github/workflows/_build.yml
     with:
       os: ${{ github.event.inputs.os }}
       build_os: ${{ github.event.inputs.build_os }}
+      artifact_prefix: "x86_64-"
       git_ref: ${{ github.event.inputs.git_ref }}
       git_sha: ${{ github.event.inputs.git_sha }}
       build_args: ${{ github.event.inputs.builder_args }}
@@ -67,14 +81,54 @@ jobs:
       AC_SIGN_IDENTITY: ${{ secrets.AC_SIGN_IDENTITY }}
       TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
 
-  release:
-    name: Release
-    needs: [build]
+  release_x86_64:
+    name: Release (x86_64)
+    needs: [build_x86_64]
     uses: ./.github/workflows/_release.yml
     with:
       os: ${{ github.event.inputs.os }}
-      plan_artifact: build-plan
-      dmg_artifact: dmg
+      plan_artifact: x86_64-build-plan
+      dmg_artifact: x86_64-dmg
+      test_build_name: ${{ github.event.inputs.test_build_name }}
+    secrets:
+      TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
+
+  # ----------------------------------------------------------------------------
+  # Build arm64 version of Emacs
+  # ----------------------------------------------------------------------------
+
+  build_arm64:
+    name: Build (arm64)
+    if: ${{ github.event.inputs.arm64 == 'true' }}
+    needs: [prepare]
+    uses: ./.github/workflows/_build.yml
+    with:
+      os: ${{ github.event.inputs.os }}
+      build_os: "macos-13-xlarge" # Only macos-13-xlarge has arm64 support.
+      artifact_prefix: "arm64-"
+      git_ref: ${{ github.event.inputs.git_ref }}
+      git_sha: ${{ github.event.inputs.git_sha }}
+      build_args: ${{ github.event.inputs.builder_args }}
+      test_build_name: ${{ github.event.inputs.test_build_name }}
+      test_release_type: ${{ github.event.inputs.test_release_type }}
+    secrets:
+      APPLE_DEVELOPER_CERTIFICATE_P12_BASE64: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_P12_BASE64 }}
+      APPLE_DEVELOPER_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_PASSWORD }}
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      AC_USERNAME: ${{ secrets.AC_USERNAME }}
+      AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+      AC_PROVIDER: ${{ secrets.AC_PROVIDER }}
+      AC_SIGN_IDENTITY: ${{ secrets.AC_SIGN_IDENTITY }}
+      TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
+
+  release_arm64:
+    name: Release (arm64)
+    needs: [build_arm64]
+    uses: ./.github/workflows/_release.yml
+    with:
+      os: ${{ github.event.inputs.os }}
+      plan_artifact: arm64-build-plan
+      dmg_artifact: arm64-dmg
       test_build_name: ${{ github.event.inputs.test_build_name }}
     secrets:
       TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
