@@ -11,7 +11,13 @@ on:
       os:
         description: GitHub Actions runner OS
         type: string
-        required: true
+        required: false
+        default: "macos-11"
+      build_os:
+        description: Target OS to build for
+        type: string
+        required: false
+        default: "macos-11"
       git_ref:
         description: Git ref to build
         type: string
@@ -88,16 +94,31 @@ jobs:
           echo "sha=--sha '${{ inputs.git_sha }}'" >> $GITHUB_OUTPUT
   plan:
     needs: [prepare]
-    runs-on: ${{ inputs.os }}
+    runs-on: ${{ inputs.build_os }}
     outputs:
       check: ${{ steps.check.outputs.result }}
     steps:
+      - name: Checkout build-emacs-for-macos repo
+        if: ${{ inputs.os != inputs.build_os }}
+        uses: actions/checkout@v4
+        with:
+          repository: jimeh/build-emacs-for-macos
+          ref: ${{ needs.prepare.outputs.builder_sha }}
+      - uses: actions/setup-go@v4
+        if: ${{ inputs.os != inputs.build_os }}
+        with:
+          go-version: "1.21"
+      - name: Build emacs-builder tool
+        if: ${{ inputs.os != inputs.build_os }}
+        run: make build
       - name: Download pre-built emacs-builder artifact
+        if: ${{ inputs.os == inputs.build_os }}
         uses: actions/download-artifact@v3
         with:
           name: emacs-builder
           path: bin
       - name: Ensure emacs-builder is executable
+        if: ${{ inputs.os == inputs.build_os }}
         run: chmod +x bin/emacs-builder
       - name: Plan build
         run: >-
@@ -127,7 +148,7 @@ jobs:
         if: ${{ steps.check.outputs.result == 'fail' }}
 
   build:
-    runs-on: ${{ inputs.os }}
+    runs-on: ${{ inputs.build_os }}
     needs: [prepare, plan]
     # Only run if check for existing release and asset failed.
     if: ${{ needs.plan.outputs.check == 'fail' }}
@@ -162,6 +183,7 @@ jobs:
           --log-level debug
           --plan build-plan.yml
           --native-full-aot
+          --no-self-sign
           ${{ inputs.build_args }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

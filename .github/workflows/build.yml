@@ -22,6 +22,10 @@ on:
         description: 'Runner OS ("macos-11", "macos-12", or "macos-latest")'
         required: true
         default: "macos-11"
+      build_os:
+        description: "Build OS used to build Emacs"
+        required: false
+        default: "macos-11"
       test_build_name:
         description: "Test build name"
         required: false
@@ -47,6 +51,7 @@ jobs:
     uses: ./.github/workflows/_build.yml
     with:
       os: ${{ github.event.inputs.os }}
+      build_os: ${{ github.event.inputs.build_os }}
       git_ref: ${{ github.event.inputs.git_ref }}
       git_sha: ${{ github.event.inputs.git_sha }}
       build_args: ${{ github.event.inputs.builder_args }}

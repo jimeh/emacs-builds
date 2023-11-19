@@ -7,7 +7,8 @@ on:
       os:
         description: GitHub Actions runner OS
         type: string
-        required: true
+        required: false
+        default: "macos-11"
       plan_artifact:
         description: Name of artifact containing a emacs-builder plan yaml file
         type: string
