@@ -2,24 +2,39 @@
 name: Nightly (master)
 on:
   schedule:
+    - cron: "0 23 1 * *"
     - cron: "0 23 2-31 * *"
   workflow_dispatch:
     inputs:
       git_sha:
         description: Override Emacs git commit SHA to build
         required: false
+      arm64:
+        description: "Build arm64 version of Emacs?"
+        required: false
+        default: false
+        type: boolean
 
 jobs:
-  build:
-    name: Build
-    uses: ./.github/workflows/build.yml
+  prepare:
+    name: Prepare
+    uses: ./.github/workflows/_prepare.yml
+    secrets:
+      TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
+
+  # ----------------------------------------------------------------------------
+  # Build x86_64 version of Emacs
+  # ----------------------------------------------------------------------------
+
+  build_x86_64:
+    name: Build (x86_64)
+    uses: ./.github/workflows/_build.yml
+    needs: [prepare]
     with:
-      git_ref: master
+      build_os: "macos-11"
+      artifact_prefix: "x86_64-"
+      git_ref: "master"
       git_sha: ${{ github.event.inputs.git_sha }}
-      builder_ref: "v0.6.43"
-      os: macos-11
-      x86_64: true
-      arm64: false
     secrets:
       APPLE_DEVELOPER_CERTIFICATE_P12_BASE64: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_P12_BASE64 }}
       APPLE_DEVELOPER_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_PASSWORD }}
@@ -28,4 +43,54 @@ jobs:
       AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
       AC_PROVIDER: ${{ secrets.AC_PROVIDER }}
       AC_SIGN_IDENTITY: ${{ secrets.AC_SIGN_IDENTITY }}
+      TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
+
+  release_x86_64:
+    name: Release (x86_64)
+    uses: ./.github/workflows/_release.yml
+    needs: [build_x86_64]
+    if: ${{ needs.build_x86_64.outputs.package_created }}
+    with:
+      os: ${{ github.event.inputs.os }}
+      plan_artifact: x86_64-build-plan
+      dmg_artifact: x86_64-dmg
+      test_build_name: ${{ github.event.inputs.test_build_name }}
+    secrets:
+      TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
+
+  # ----------------------------------------------------------------------------
+  # Build arm64 version of Emacs
+  # ----------------------------------------------------------------------------
+
+  build_arm64:
+    name: Build (arm64)
+    if: github.event.inputs.arm64 || github.event.schedule == '0 23 1 * *'
+    uses: ./.github/workflows/_build.yml
+    needs: [prepare]
+    with:
+      build_os: "macos-13-xlarge" # Only macos-13-xlarge has arm64 support.
+      artifact_prefix: "arm64-"
+      git_ref: "master"
+      git_sha: ${{ github.event.inputs.git_sha }}
+    secrets:
+      APPLE_DEVELOPER_CERTIFICATE_P12_BASE64: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_P12_BASE64 }}
+      APPLE_DEVELOPER_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_PASSWORD }}
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      AC_USERNAME: ${{ secrets.AC_USERNAME }}
+      AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+      AC_PROVIDER: ${{ secrets.AC_PROVIDER }}
+      AC_SIGN_IDENTITY: ${{ secrets.AC_SIGN_IDENTITY }}
+      TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
+
+  release_arm64:
+    name: Release (arm64)
+    uses: ./.github/workflows/_release.yml
+    needs: [build_arm64]
+    if: ${{ needs.build_arm64.outputs.package_created }}
+    with:
+      os: ${{ github.event.inputs.os }}
+      plan_artifact: arm64-build-plan
+      dmg_artifact: arm64-dmg
+      test_build_name: ${{ github.event.inputs.test_build_name }}
+    secrets:
       TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
