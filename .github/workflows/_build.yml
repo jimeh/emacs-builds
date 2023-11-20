@@ -149,7 +149,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: echo 'Planned release already seems to exist.'
-        if: ${{ steps.check.outputs.result == 'fail' }}
+        if: ${{ steps.check.outputs.result == 'ok' }}
 
   build:
     runs-on: ${{ inputs.build_os }}
