@@ -12,7 +12,7 @@ on:
       arm64:
         description: "Build arm64 version of Emacs?"
         required: false
-        default: true
+        default: false
         type: boolean
 
 jobs:
