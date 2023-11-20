@@ -51,10 +51,8 @@ jobs:
     needs: [build_x86_64]
     if: ${{ needs.build_x86_64.outputs.package_created }}
     with:
-      os: ${{ github.event.inputs.os }}
       plan_artifact: x86_64-build-plan
       dmg_artifact: x86_64-dmg
-      test_build_name: ${{ github.event.inputs.test_build_name }}
     secrets:
       TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
 
@@ -88,9 +86,7 @@ jobs:
     needs: [build_arm64]
     if: ${{ needs.build_arm64.outputs.package_created }}
     with:
-      os: ${{ github.event.inputs.os }}
       plan_artifact: arm64-build-plan
       dmg_artifact: arm64-dmg
-      test_build_name: ${{ github.event.inputs.test_build_name }}
     secrets:
       TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
