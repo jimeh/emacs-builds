@@ -7,7 +7,7 @@ on:
         description: GitHub Actions runner OS
         type: string
         required: false
-        default: "macos-11"
+        default: "macos-12"
       builder_ref:
         description: Git ref to checkout of build-emacs-for-macos
         required: false

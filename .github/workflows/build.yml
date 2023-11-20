@@ -19,9 +19,9 @@ on:
         required: false
         default: ""
       os:
-        description: 'Runner OS ("macos-11", "macos-12", or "macos-latest")'
+        description: 'Runner OS ("macos-12", "macos-13", or "macos-latest")'
         required: true
-        default: "macos-11"
+        default: "macos-12"
       test_build_name:
         description: "Test build name"
         required: false
@@ -62,7 +62,7 @@ jobs:
     needs: [prepare]
     with:
       os: ${{ github.event.inputs.os }}
-      build_os: "macos-11"
+      build_os: "macos-12"
       artifact_prefix: "x86_64-"
       git_ref: ${{ github.event.inputs.git_ref }}
       git_sha: ${{ github.event.inputs.git_sha }}
@@ -89,6 +89,7 @@ jobs:
       plan_artifact: x86_64-build-plan
       dmg_artifact: x86_64-dmg
       test_build_name: ${{ github.event.inputs.test_build_name }}
+      update_casks: true
     secrets:
       TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
 
@@ -130,5 +131,6 @@ jobs:
       plan_artifact: arm64-build-plan
       dmg_artifact: arm64-dmg
       test_build_name: ${{ github.event.inputs.test_build_name }}
+      update_casks: false
     secrets:
       TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}

@@ -8,7 +8,7 @@ on:
         description: GitHub Actions runner OS
         type: string
         required: false
-        default: "macos-11"
+        default: "macos-12"
       plan_artifact:
         description: Name of artifact containing a emacs-builder plan yaml file
         type: string
@@ -21,6 +21,11 @@ on:
         description: "Test build name"
         type: string
         required: false
+      update_casks:
+        description: "Update casks in homebrew tap?"
+        type: boolean
+        required: true
+        default: true
     secrets:
       TAP_REPO_TOKEN:
         description: Personal Access Token for Homebrew Tap repo
@@ -57,7 +62,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Trigger update casks workflow in homebrew tap
-        if: ${{ steps.dmg.outputs.result != 'fail' && inputs.test_build_name == '' }}
+        if: >-
+          steps.dmg.outputs.result != 'fail' &&
+          inputs.test_build_name == '' &&
+          inputs.update_casks
         run: >-
           gh workflow run --repo jimeh/homebrew-emacs-builds update-casks.yml
         env:

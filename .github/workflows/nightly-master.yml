@@ -31,7 +31,7 @@ jobs:
     uses: ./.github/workflows/_build.yml
     needs: [prepare]
     with:
-      build_os: "macos-11"
+      build_os: "macos-12"
       artifact_prefix: "x86_64-"
       git_ref: "master"
       git_sha: ${{ github.event.inputs.git_sha }}
@@ -53,6 +53,7 @@ jobs:
     with:
       plan_artifact: x86_64-build-plan
       dmg_artifact: x86_64-dmg
+      update_casks: true
     secrets:
       TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
 
@@ -88,5 +89,6 @@ jobs:
     with:
       plan_artifact: arm64-build-plan
       dmg_artifact: arm64-dmg
+      update_casks: false
     secrets:
       TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}

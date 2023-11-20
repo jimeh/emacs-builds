@@ -12,12 +12,12 @@ on:
         description: GitHub Actions runner OS
         type: string
         required: false
-        default: "macos-11"
+        default: "macos-12"
       build_os:
         description: Target OS to build for
         type: string
         required: false
-        default: "macos-11"
+        default: "macos-12"
       git_ref:
         description: Git ref to build
         type: string
