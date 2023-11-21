@@ -56,8 +56,11 @@
 
 ## System Requirements
 
-- macOS 11.x (Big Sur) or later (uses Rosetta2 on Apple Silicon machines).
-- Xcode Command Line Tools for native compilation (Emacs 28.x and later).
+- macOS 13 Ventura or later for Apple Silicon builds.
+- macOS 12 Monterey or later for Intel builds, which can run on Apple Silicon
+  via Rosetta2.
+- Xcode Command Line Tools to use native compilation in Emacs, available since
+  28.x.
 
 ## Installation
 
@@ -84,31 +87,52 @@ for at least a day or two without any obvious issues.
    brew tap jimeh/emacs-builds
    ```
 2. Install one of the available casks:
-   - `emacs-app` for the latest stable release of Emacs (includes native-comp
-     since v28.1):
+   - `emacs-app` — Latest stable release of Emacs.
      ```
      brew install --cask emacs-app
      ```
-   - `emacs-app-pretest` for the latest pretest build from Emacs:
+   - `emacs-app-pretest` — Latest pretest build of Emacs.
      ```
      brew install --cask emacs-app-pretest
      ```
-   - `emacs-app-nightly` for the latest nightly build from Emacs' `master`
-     branch:
+   - `emacs-app-nightly` — Build of Emacs from the `master` branch, updated
+     every night.
      ```
      brew install --cask emacs-app-nightly
+     ```
+   - `emacs-app-monthly` — Build of Emacs from the `master` branch, updated on
+     the 1st of each month. These includes native Apple Silicon support.
+     ```
+     brew install --cask emacs-app-monthly
      ```
    - `emacs-app-good` for the latest known good nightly build listed on [#7][7]:
      ```
      brew install --cask emacs-app-good
      ```
-   - `emacs-app-nightly-29` for the latest Emacs 29.x nightly build from the
-     `emacs-29` branch:
-     ```
-     brew install --cask emacs-app-nightly-29
-     ```
 
 [7]: https://github.com/jimeh/emacs-builds/issues/7
+
+## Apple Silicon
+
+Native builds for Apple Silicon is supported, but currently GitHub's M1-based
+Actions Runners are prohibitively expensive for nightly builds. Intel builds
+though do work on Apple Silicon machines via Rosetta2, with a minor performance
+impact.
+
+Due to the costs, Apple Silicon builds are for now only scheduled for the 1st of
+each month. The `emacs-app-monthly` Homebrew Cask will always be pointing at a
+release that includes Intel and Apple Silicon builds.
+
+Builds for stable releases of Emacs will also include both Intel and Apple
+Silicon builds.
+
+### Costs
+
+At time of writing (2023-11-21), an average Apple Silicon build uses around 17
+minutes of billable time, at a cost of $0.16 USD per minute, that comes out to
+around $2.72 per build. I am considering enabling sponsorship on this repository
+in an effort to cover the costs for more frequent Apple Silicon builds, and will
+update here if/when I have any news.
 
 ## Use Emacs.app as `emacs` CLI Tool
 
