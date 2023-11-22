@@ -10,7 +10,6 @@
   <a href="https://github.com/jimeh/emacs-builds/releases/latest"><img alt="GitHub release (stable)" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjimeh%2Fhomebrew-emacs-builds%2Fmeta%2FCasks%2Femacs-app%2Fshield.json"></a>
   <a href="https://github.com/jimeh/emacs-builds/releases?q=pretest&expanded=true"><img alt="GitHub release (pretest)" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjimeh%2Fhomebrew-emacs-builds%2Fmeta%2FCasks%2Femacs-app-pretest%2Fshield.json"></a>
   <a href="https://github.com/jimeh/emacs-builds/releases?q=master&expanded=true"><img alt="GitHub release (nightly)" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjimeh%2Fhomebrew-emacs-builds%2Fmeta%2FCasks%2Femacs-app-nightly%2Fshield.json"></a>
-  <a href="https://github.com/jimeh/emacs-builds/releases?q=emacs-29&expanded=true"><img alt="GitHub release (nightly@emacs-29)" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjimeh%2Fhomebrew-emacs-builds%2Fmeta%2FCasks%2Femacs-app-nightly-29%2Fshield.json"></a>
   <a href="https://github.com/jimeh/emacs-builds/issues/7"><img alt="GitHub release (known good nightly)" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjimeh%2Fhomebrew-emacs-builds%2Fmeta%2FCasks%2Femacs-app-good%2Fshield.json"></a>
   <a href="https://github.com/jimeh/emacs-builds/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/jimeh/emacs-builds?style=flat&logo=github&logoColor=white"></a>
   <a href="https://github.com/jimeh/emacs-builds/pulls"><img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr-raw/jimeh/emacs-builds?style=flat&logo=github&logoColor=white"></a>
@@ -216,3 +215,21 @@ GitHub Actions workflow run which produced the build.
 Please see [Issues][] for details of things to come, or to report issues.
 
 [issues]: https://github.com/jimeh/emacs-builds/issues
+
+## News / Recent Changes
+
+### 2023-11-22 — Apple Silicon builds, drop macOS 11 support
+
+Apple Silicon builds are now available, but limited to stable releases, and
+nightly builds on the 1st of each month due to the cost of using M1-based
+runners on GitHub Actions. Apple Silicon builds also require macOS 13 Ventura,
+as that is the oldest macOS version available on M1-based runners.
+
+Additionally, Intel builds minimum required macOS version has been increased
+from macOS 11 Big Sur, to macOS 12 Monterey. This was needed as Homebrew no
+longer supports Big Sur, leading to very lengthy and error prone builds as all
+Homebrew dependencies had to be installed from source.
+
+If dropping support for macOS 11 turns out to be a big issue, it may be possible
+to offer macOS 11 compatible builds on a less frequent schedule similar to what
+we're doing with Apple Silicon.
