@@ -63,7 +63,9 @@ jobs:
 
   build_arm64:
     name: Build (arm64)
-    if: github.event.inputs.arm64 || github.event.schedule == '0 23 1 * *'
+    if: >-
+      github.event.inputs.arm64 == 'true' ||
+      github.event.schedule == '0 23 1 * *'
     uses: ./.github/workflows/_build.yml
     needs: [prepare]
     with:
