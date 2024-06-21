@@ -53,7 +53,7 @@
     },
     "Emacs-29.3": {
       "Emacs.2024-03-24.ae8f815.emacs-29-3.macOS-12.x86_64.dmg": 129,
-      "Emacs.2024-03-24.ae8f815.emacs-29-3.macOS-13.arm64.dmg": 562
+      "Emacs.2024-03-24.ae8f815.emacs-29-3.macOS-13.arm64.dmg": 566
     },
     "Emacs.2021-05-08.bb8b8d7.master": {
       "Emacs.2021-05-08.bb8b8d7.master.macOS-10-15.x86_64.tbz": 11
@@ -3728,7 +3728,7 @@
       "Emacs.2024-01-14.a83e60e.master.macOS-12.x86_64.dmg": 2
     },
     "Emacs.2024-01-15.2ef3111.master": {
-      "Emacs.2024-01-15.2ef3111.master.macOS-12.x86_64.dmg": 2
+      "Emacs.2024-01-15.2ef3111.master.macOS-12.x86_64.dmg": 3
     },
     "Emacs.2024-01-16.f19f560.master": {
       "Emacs.2024-01-16.f19f560.master.macOS-12.x86_64.dmg": 5
@@ -3749,13 +3749,13 @@
       "Emacs.2024-01-22.f821ac2.master.macOS-12.x86_64.dmg": 2
     },
     "Emacs.2024-01-23.13c7249.master": {
-      "Emacs.2024-01-23.13c7249.master.macOS-12.x86_64.dmg": 4
+      "Emacs.2024-01-23.13c7249.master.macOS-12.x86_64.dmg": 5
     },
     "Emacs.2024-01-24.ad004f1.master": {
       "Emacs.2024-01-24.ad004f1.master.macOS-12.x86_64.dmg": 5
     },
     "Emacs.2024-01-26.b803d10.master": {
-      "Emacs.2024-01-26.b803d10.master.macOS-12.x86_64.dmg": 2
+      "Emacs.2024-01-26.b803d10.master.macOS-12.x86_64.dmg": 3
     },
     "Emacs.2024-01-27.744a10a.master": {
       "Emacs.2024-01-27.744a10a.master.macOS-12.x86_64.dmg": 3
@@ -3981,7 +3981,7 @@
     },
     "Emacs.2024-06-01.9a2088b.master": {
       "Emacs.2024-06-01.9a2088b.master.macOS-12.x86_64.dmg": 4,
-      "Emacs.2024-06-01.9a2088b.master.macOS-13.arm64.dmg": 39
+      "Emacs.2024-06-01.9a2088b.master.macOS-13.arm64.dmg": 41
     },
     "Emacs.2024-06-02.b44d511.master": {
       "Emacs.2024-06-02.b44d511.master.macOS-12.x86_64.dmg": 1
@@ -4027,6 +4027,9 @@
     },
     "Emacs.2024-06-17.f7953a0.master": {
       "Emacs.2024-06-17.f7953a0.master.macOS-12.x86_64.dmg": 2
+    },
+    "Emacs.2024-06-19.374f423.master": {
+      "Emacs.2024-06-19.374f423.master.macOS-12.x86_64.dmg": 1
     }
   }
 }
