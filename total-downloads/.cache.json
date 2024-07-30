@@ -56,7 +56,7 @@
       "Emacs.2024-03-24.ae8f815.emacs-29-3.macOS-13.arm64.dmg": 590
     },
     "Emacs-29.4": {
-      "Emacs.2024-06-22.6a299b3.emacs-29-4.macOS-12.x86_64.dmg": 43,
+      "Emacs.2024-06-22.6a299b3.emacs-29-4.macOS-12.x86_64.dmg": 47,
       "Emacs.2024-06-22.6a299b3.emacs-29-4.macOS-13.arm64.dmg": 139
     },
     "Emacs.2021-05-08.bb8b8d7.master": {
@@ -4072,7 +4072,7 @@
       "Emacs.2024-06-30.7c8d4e9.master.macOS-12.x86_64.dmg": 2
     },
     "Emacs.2024-07-01.e087d30.master": {
-      "Emacs.2024-07-01.e087d30.master.macOS-13.arm64.dmg": 48
+      "Emacs.2024-07-01.e087d30.master.macOS-13.arm64.dmg": 49
     },
     "Emacs.2024-07-02.667ca66.master": {
       "Emacs.2024-07-02.667ca66.master.macOS-12.x86_64.dmg": 1
@@ -4109,6 +4109,9 @@
     },
     "Emacs.2024-07-23.19a18e4.master": {
       "Emacs.2024-07-23.19a18e4.master.macOS-12.x86_64.dmg": 1
+    },
+    "Emacs.2024-07-28.e4d22ab.master": {
+      "Emacs.2024-07-28.e4d22ab.master.macOS-12.x86_64.dmg": 1
     }
   }
 }
