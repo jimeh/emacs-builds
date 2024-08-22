@@ -56,8 +56,8 @@
       "Emacs.2024-03-24.ae8f815.emacs-29-3.macOS-13.arm64.dmg": 590
     },
     "Emacs-29.4": {
-      "Emacs.2024-06-22.6a299b3.emacs-29-4.macOS-12.x86_64.dmg": 66,
-      "Emacs.2024-06-22.6a299b3.emacs-29-4.macOS-13.arm64.dmg": 220
+      "Emacs.2024-06-22.6a299b3.emacs-29-4.macOS-12.x86_64.dmg": 67,
+      "Emacs.2024-06-22.6a299b3.emacs-29-4.macOS-13.arm64.dmg": 223
     },
     "Emacs.2021-05-08.bb8b8d7.master": {
       "Emacs.2021-05-08.bb8b8d7.master.macOS-10-15.x86_64.tbz": 11
@@ -2046,7 +2046,7 @@
       "Emacs.2022-10-21.f1f4a0c.emacs-28.macOS-11.x86_64.dmg": 14
     },
     "Emacs.2022-10-22.9db7b11.master": {
-      "Emacs.2022-10-22.9db7b11.master.macOS-11.x86_64.dmg": 6
+      "Emacs.2022-10-22.9db7b11.master.macOS-11.x86_64.dmg": 7
     },
     "Emacs.2022-10-23.f7816c9.master": {
       "Emacs.2022-10-23.f7816c9.master.macOS-11.x86_64.dmg": 7
@@ -3579,7 +3579,7 @@
       "Emacs.2023-11-17.d8c1ac6.master.macOS-11.x86_64.dmg": 8
     },
     "Emacs.2023-11-18.47b497b.master": {
-      "Emacs.2023-11-18.47b497b.master.macOS-11.x86_64.dmg": 9
+      "Emacs.2023-11-18.47b497b.master.macOS-11.x86_64.dmg": 11
     },
     "Emacs.2023-11-19.16ac377.master": {
       "Emacs.2023-11-19.16ac377.master.macOS-12.x86_64.dmg": 26,
@@ -4152,6 +4152,9 @@
     },
     "Emacs.2024-08-18.754d83d.master": {
       "Emacs.2024-08-18.754d83d.master.macOS-12.x86_64.dmg": 1
+    },
+    "Emacs.2024-08-20.a268496.master": {
+      "Emacs.2024-08-20.a268496.master.macOS-12.x86_64.dmg": 1
     }
   }
 }
