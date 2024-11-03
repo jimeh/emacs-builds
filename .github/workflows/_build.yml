@@ -111,7 +111,7 @@ jobs:
       - uses: actions/setup-go@v5
         if: ${{ inputs.os != inputs.build_os }}
         with:
-          go-version: "1.21"
+          go-version: "1.23"
       - name: Build emacs-builder tool
         if: ${{ inputs.os != inputs.build_os }}
         run: make build
@@ -163,34 +163,30 @@ jobs:
           repository: jimeh/build-emacs-for-macos
           ref: ${{ needs.prepare.outputs.builder_sha }}
           path: builder
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.2"
-      - name: Update homebrew
-        run: brew update
-      - name: Fix system python breaking homebrew
-        run: >-
-          find "$(brew --prefix)/bin" -type l
-          -ilname '*/Library/Frameworks/Python.framework/*'
-          -delete
-      - name: Install dependencies
-        run: make bootstrap
-        working-directory: builder
-        env:
-          BUNDLE_WITHOUT: "development"
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: Download build-plan artifact
         uses: actions/download-artifact@v4
         with:
           name: ${{ inputs.artifact_prefix }}build-plan
-          path: ./
+          path: ./builder/
+      - name: Install dependencies
+        run: >-
+          nix develop
+          --command make bootstrap-ruby
+        working-directory: builder
+        env:
+          BUNDLE_WITHOUT: "development"
       - name: Build Emacs
         run: >-
-          ./builder/build-emacs-for-macos
+          nix develop
+          --command ./build-emacs-for-macos
           --log-level debug
           --plan build-plan.yml
           --native-full-aot
           --no-self-sign
           ${{ inputs.build_args }}
+        working-directory: builder
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload unsigned app artifact

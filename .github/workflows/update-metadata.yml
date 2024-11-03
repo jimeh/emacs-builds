@@ -11,12 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout meta branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: meta
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.23"
       - name: update total downloads shield JSON
         run: >-
           go run . badges downloads
@@ -25,7 +25,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: commit and push changes to meta branch
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore(meta): update metadata files"
           commit_user_name: github-actions[bot]
