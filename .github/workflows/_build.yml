@@ -4,6 +4,10 @@ name: _build
 on:
   workflow_call:
     inputs:
+      should_run:
+        description: Whether or not to run the build job
+        type: boolean
+        default: false
       artifact_prefix:
         description: Artifact prefix
         type: string
@@ -103,7 +107,6 @@ jobs:
       check: ${{ steps.check.outputs.result }}
     steps:
       - name: Checkout build-emacs-for-macos repo
-        if: ${{ inputs.os != inputs.build_os }}
         uses: actions/checkout@v4
         with:
           repository: jimeh/build-emacs-for-macos
@@ -124,8 +127,11 @@ jobs:
       - name: Ensure emacs-builder is executable
         if: ${{ inputs.os == inputs.build_os }}
         run: chmod +x bin/emacs-builder
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: Plan build
         run: >-
+          nix develop --command
           bin/emacs-builder -l debug plan --output build-plan.yml
           --output-dir '${{ github.workspace }}/builds'
           ${{ needs.prepare.outputs.test_plan_args }}
@@ -239,7 +245,7 @@ jobs:
           KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
 
           # import certificate and provisioning profile from secrets
-          echo -n "$CERT_BASE64" | base64 --decode --output "$CERTIFICATE_PATH"
+          echo -n "$CERT_BASE64" | base64 --decode > "$CERTIFICATE_PATH"
 
           # create temporary keychain
           security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"

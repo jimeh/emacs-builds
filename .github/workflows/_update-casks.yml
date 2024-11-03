@@ -1,0 +1,27 @@
+---
+name: _update-casks
+concurrency:
+  group: _update-casks
+  cancel-in-progress: false
+on:
+  workflow_call:
+    inputs:
+      os:
+        description: GitHub Actions runner OS
+        type: string
+        required: false
+        default: "ubuntu-latest"
+    secrets:
+      TAP_REPO_TOKEN:
+        description: Personal Access Token for Homebrew Tap repo
+        required: true
+
+jobs:
+  emacs-builds:
+    runs-on: ${{ inputs.os }}
+    steps:
+      - name: Trigger update casks workflow in homebrew tap
+        run: >-
+          gh workflow run --repo jimeh/homebrew-emacs-builds update-casks.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
