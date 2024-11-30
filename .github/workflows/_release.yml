@@ -7,6 +7,10 @@ concurrency:
 on:
   workflow_call:
     inputs:
+      builder_ref:
+        description: Git ref of build-emacs-for-macos to use
+        type: string
+        required: true
       os:
         description: GitHub Actions runner OS
         type: string
@@ -20,10 +24,6 @@ on:
         description: Name of artifact containing a *.dmg files to release
         type: string
         required: true
-    secrets:
-      TAP_REPO_TOKEN:
-        description: Personal Access Token for Homebrew Tap repo
-        required: true
 
 jobs:
   github:
@@ -32,7 +32,7 @@ jobs:
       - name: Download pre-built emacs-builder artifact
         uses: actions/download-artifact@v4
         with:
-          name: emacs-builder
+          name: emacs-builder-${{ runner.arch }}
           path: bin
       - name: Ensure emacs-builder is executable
         run: chmod +x bin/emacs-builder
@@ -49,11 +49,11 @@ jobs:
           name: ${{ inputs.dmg_artifact }}
           path: builds
       - name: Publish disk images to a GitHub Release
-        if: ${{ steps.dmg.outputs.result != 'fail' }}
+        if: steps.dmg.outputs.result != 'fail'
         run: >-
           bin/emacs-builder -l debug release --plan build-plan.yml publish
           $(find builds -name '*.dmg' -or -name '*.sha256')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: echo 'No DMG artifact available, was there a new commit to build?'
-        if: ${{ steps.dmg.outputs.result == 'fail' }}
+        if: steps.dmg.outputs.result == 'fail'

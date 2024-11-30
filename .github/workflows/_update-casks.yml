@@ -11,10 +11,6 @@ on:
         type: string
         required: false
         default: "ubuntu-latest"
-    secrets:
-      TAP_REPO_TOKEN:
-        description: Personal Access Token for Homebrew Tap repo
-        required: true
 
 jobs:
   emacs-builds:

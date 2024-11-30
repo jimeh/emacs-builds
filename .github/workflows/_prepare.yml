@@ -3,24 +3,20 @@ name: _prepare
 on:
   workflow_call:
     inputs:
-      os:
-        description: GitHub Actions runner OS
-        type: string
-        required: false
-        default: "macos-12"
       builder_ref:
         description: Git ref to checkout of build-emacs-for-macos
-        required: false
-        type: string
-        default: "v0.6.50"
-    secrets:
-      TAP_REPO_TOKEN:
-        description: Personal Access Token for Homebrew Tap repo
         required: true
+        type: string
+    outputs:
+      builder_sha:
+        description: Git SHA of build-emacs-for-macos at builder_ref
+        value: ${{ jobs.builder-sha.outputs.sha }}
 
 jobs:
-  emacs-builder:
-    runs-on: ${{ inputs.os }}
+  builder-sha:
+    runs-on: "macos-13"
+    outputs:
+      sha: ${{ steps.builder_sha.outputs.sha }}
     steps:
       - name: Checkout build-emacs-for-macos repo
         uses: actions/checkout@v4
@@ -28,22 +24,57 @@ jobs:
           repository: jimeh/build-emacs-for-macos
           ref: ${{ inputs.builder_ref }}
       - name: Store builder Git SHA
+        id: builder_sha
         run: |
-          git rev-parse HEAD > emacs-builder-git-sha.txt
+          BUILDER_SHA="$(git rev-parse HEAD)"
+          echo "$BUILDER_SHA" > build-emacs-for-macos-git-sha.txt
+          echo "sha=$BUILDER_SHA" >> $GITHUB_OUTPUT
+          echo "Builder ref ${{ inputs.builder_ref }} resolved to" \
+               "commit SHA: $BUILDER_SHA"
       - name: Upload builder git SHA artifact
         uses: actions/upload-artifact@v4
         with:
-          name: emacs-builder-git-sha
-          path: emacs-builder-git-sha.txt
+          name: build-emacs-for-macos-git-sha
+          path: build-emacs-for-macos-git-sha.txt
           if-no-files-found: error
-      - uses: actions/setup-go@v5
+
+  emacs-builder:
+    needs: [builder-sha]
+    strategy:
+      matrix:
+        os:
+          - macos-13 # Only macos-13 and earlier are x86_64.
+          - macos-14 # Only macos-14 and later are ARM64.
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Cache emacs-builder (${{ runner.arch }})
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: bin/emacs-builder
+          key: emacs-builder-${{ runner.arch }}-${{ needs.builder-sha.outputs.sha }}-bin
+      - name: Checkout build-emacs-for-macos repo
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: jimeh/build-emacs-for-macos
+          ref: ${{ inputs.builder_ref }}
+          fetch-depth: 0
+      - name: Setup Go
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/setup-go@v5
         with:
           go-version: "1.23"
       - name: Build emacs-builder tool
+        if: steps.cache.outputs.cache-hit != 'true'
         run: make build
+      - name: Ensure emacs-builder is executable
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: chmod +x bin/emacs-builder
+      - run: bin/emacs-builder --version
       - name: Upload emacs-builder artifact
         uses: actions/upload-artifact@v4
         with:
-          name: emacs-builder
+          name: emacs-builder-${{ runner.arch }}
           path: bin/emacs-builder
           if-no-files-found: error

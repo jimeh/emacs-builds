@@ -1,283 +1,145 @@
 ---
-# Requires _prepare.yml re-usable workflow to have run.
 name: _build
 on:
   workflow_call:
     inputs:
-      should_run:
-        description: Whether or not to run the build job
-        type: boolean
-        default: false
-      artifact_prefix:
-        description: Artifact prefix
-        type: string
-        required: false
-      os:
-        description: GitHub Actions runner OS
-        type: string
-        required: false
-        default: "macos-12"
-      build_os:
-        description: Target OS to build for
-        type: string
-        required: false
-        default: "macos-12"
       git_ref:
-        description: Git ref to build
-        type: string
+        description: Emacs git ref to build
         required: true
+        type: string
       git_sha:
-        description: Override git SHA to build
-        type: string
+        description: Override Emacs git commit SHA to build
         required: false
-      build_args:
+        type: string
+      builder_ref:
+        description: "Git ref to checkout of build-emacs-for-macos"
+        required: true
+        type: string
+      builder_args:
         description: Custom arguments passed to build script
-        type: string
         required: false
+        default: ""
+        type: string
       test_build_name:
         description: "Test build name"
-        type: string
         required: false
+        default: ""
+        type: string
       test_release_type:
         description: "prerelease or draft"
-        type: string
         required: false
-        default: "prerelease"
-    secrets:
-      APPLE_DEVELOPER_CERTIFICATE_P12_BASE64:
-        description: Base64 encoded Apple Developer Certificate
-        required: true
-      APPLE_DEVELOPER_CERTIFICATE_PASSWORD:
-        description: Password for Apple Developer Certificate
-        required: true
-      KEYCHAIN_PASSWORD:
-        description: Password to use for temporary local keychain on runner
-        required: true
-      AC_USERNAME:
-        description: Apple Connect Username
-        required: true
-      AC_PASSWORD:
-        description: Apple Connect Password
-        required: true
-      AC_PROVIDER:
-        description: Apple Connect Provider
-        required: true
-      AC_SIGN_IDENTITY:
-        description: Apple Connect Signing Identify
-        required: true
-      TAP_REPO_TOKEN:
-        description: Homebrew Tap Token
-        required: true
-    outputs:
-      package_created:
-        description: "Whether or not a package was created"
-        value: ${{ jobs.package.result == 'success' }}
+        default: ""
+        type: string
+      x86_64:
+        description: "Build x86_64 version of Emacs"
+        required: false
+        default: true
+        type: boolean
+      arm64:
+        description: "Build arm64 version of Emacs"
+        required: false
+        default: true
+        type: boolean
 
 jobs:
   prepare:
-    runs-on: ${{ inputs.os }}
-    outputs:
-      builder_sha: ${{ steps.builder_sha.outputs.sha }}
-      emacs_sha_override: ${{ steps.emacs_sha.outputs.sha }}
-      test_plan_args: ${{ steps.test_plan_args.outputs.args }}
-    steps:
-      - name: Download emacs-builder git SHA artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: emacs-builder-git-sha
-          path: ./
-      - name: Store builder Git SHA
-        id: builder_sha
-        run: >-
-          echo "sha=$(cat emacs-builder-git-sha.txt)" >> $GITHUB_OUTPUT
-      - name: Prepare plan test args
-        id: test_plan_args
-        if: ${{ inputs.test_build_name != '' }}
-        run: >-
-          echo "args=--test-build '${{ inputs.test_build_name }}' --test-release-type '${{ inputs.test_release_type }}'" >> $GITHUB_OUTPUT
-      - name: Set git SHA override
-        id: emacs_sha
-        if: ${{ inputs.git_sha != '' }}
-        run: >-
-          echo "sha=--sha '${{ inputs.git_sha }}'" >> $GITHUB_OUTPUT
-  plan:
+    name: Prepare
+    uses: ./.github/workflows/_prepare.yml
+    with:
+      builder_ref: ${{ inputs.builder_ref }}
+
+  # ----------------------------------------------------------------------------
+  # Build x86_64 version of Emacs
+  # ----------------------------------------------------------------------------
+
+  build_x86_64:
+    name: Build (x86_64)
+    if: inputs.x86_64
+    uses: ./.github/workflows/_build_emacs.yml
     needs: [prepare]
-    runs-on: ${{ inputs.build_os }}
-    outputs:
-      check: ${{ steps.check.outputs.result }}
-    steps:
-      - name: Checkout build-emacs-for-macos repo
-        uses: actions/checkout@v4
-        with:
-          repository: jimeh/build-emacs-for-macos
-          ref: ${{ needs.prepare.outputs.builder_sha }}
-      - uses: actions/setup-go@v5
-        if: ${{ inputs.os != inputs.build_os }}
-        with:
-          go-version: "1.23"
-      - name: Build emacs-builder tool
-        if: ${{ inputs.os != inputs.build_os }}
-        run: make build
-      - name: Download pre-built emacs-builder artifact
-        if: ${{ inputs.os == inputs.build_os }}
-        uses: actions/download-artifact@v4
-        with:
-          name: emacs-builder
-          path: bin
-      - name: Ensure emacs-builder is executable
-        if: ${{ inputs.os == inputs.build_os }}
-        run: chmod +x bin/emacs-builder
-      - uses: DeterminateSystems/nix-installer-action@main
-      - uses: DeterminateSystems/magic-nix-cache-action@main
-      - name: Plan build
-        run: >-
-          nix develop --command
-          bin/emacs-builder -l debug plan --output build-plan.yml
-          --output-dir '${{ github.workspace }}/builds'
-          ${{ needs.prepare.outputs.test_plan_args }}
-          ${{ needs.prepare.outputs.emacs_sha_override }}
-          '${{ inputs.git_ref }}'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Show plan
-        run: cat build-plan.yml
-      - name: Upload build-plan artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ inputs.artifact_prefix }}build-plan
-          path: build-plan.yml
-          if-no-files-found: error
-      - name: Check if planned release and asset already exist
-        id: check
-        continue-on-error: true
-        run: |
-          echo "result=$((bin/emacs-builder -l debug release --plan build-plan.yml check && echo 'ok') || echo 'fail')" >> $GITHUB_OUTPUT
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: echo 'Planned release already seems to exist.'
-        if: ${{ steps.check.outputs.result == 'ok' }}
+    with:
+      builder_ref: ${{ needs.prepare.outputs.builder_sha }}
+      os: "macos-13"
+      build_os: "macos-13" # Only macos-13 and earlier are x86_64.
+      artifact_prefix: "x86_64-"
+      git_ref: ${{ inputs.git_ref }}
+      git_sha: ${{ inputs.git_sha }}
+      build_args: ${{ inputs.builder_args }}
+      test_build_name: ${{ inputs.test_build_name }}
+      test_release_type: ${{ inputs.test_release_type }}
+    secrets: inherit
 
-  build:
-    runs-on: ${{ inputs.build_os }}
-    needs: [prepare, plan]
-    # Only run if check for existing release and asset failed.
-    if: ${{ needs.plan.outputs.check == 'fail' }}
-    steps:
-      - name: Checkout build-emacs-for-macos repo
-        uses: actions/checkout@v4
-        with:
-          repository: jimeh/build-emacs-for-macos
-          ref: ${{ needs.prepare.outputs.builder_sha }}
-          path: builder
-      - uses: DeterminateSystems/nix-installer-action@main
-      - uses: DeterminateSystems/magic-nix-cache-action@main
-      - name: Download build-plan artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ inputs.artifact_prefix }}build-plan
-          path: ./builder/
-      - name: Install dependencies
-        run: >-
-          nix develop
-          --command make bootstrap-ruby
-        working-directory: builder
-        env:
-          BUNDLE_WITHOUT: "development"
-      - name: Build Emacs
-        run: >-
-          nix develop
-          --command ./build-emacs-for-macos
-          --log-level debug
-          --plan build-plan.yml
-          --native-full-aot
-          --no-self-sign
-          ${{ inputs.build_args }}
-        working-directory: builder
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Upload unsigned app artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ inputs.artifact_prefix }}unsigned-app
-          path: builds/*.tbz
-          if-no-files-found: error
-      - name: Upload Emacs source artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ inputs.artifact_prefix }}emacs-source
-          path: builder/tarballs/*.tgz
+  release_x86_64:
+    name: Release (x86_64)
+    uses: ./.github/workflows/_release.yml
+    # Depend on both build_x86_64 and build_arm64, but only run if build_x86_64
+    # was successful and a package was created. This ensure wait for all builds
+    # to complete before running any release jobs.
+    needs: [prepare, build_x86_64, build_arm64]
+    if: |
+      always() &&
+      needs.build_x86_64.result == 'success' &&
+      needs.build_x86_64.outputs.package_created &&
+      needs.build_arm64.result != 'failure'
+    with:
+      builder_ref: ${{ needs.prepare.outputs.builder_sha }}
+      os: "macos-13" # Only macos-13 and earlier are x86_64.
+      plan_artifact: x86_64-build-plan
+      dmg_artifact: x86_64-dmg
 
-  package:
-    runs-on: ${{ inputs.os }}
-    needs: [prepare, plan, build]
-    steps:
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - name: Install dmgbuild
-        run: |
-          $(command -v pip3 || command -v pip) install --upgrade dmgbuild
-      - name: Download pre-built emacs-builder artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: emacs-builder
-          path: bin
-      - name: Ensure emacs-builder is executable
-        run: chmod +x bin/emacs-builder
-      - name: Download build-plan artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ inputs.artifact_prefix }}build-plan
-          path: ./
-      - name: Download unsigned app artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ inputs.artifact_prefix }}unsigned-app
-          path: builds
-      - name: Extract unsigned app archive
-        run: |
-          find * -name '*.tbz' -exec tar xvjf "{}" \;
-        working-directory: builds
-      - name: Install the Apple signing certificate
-        run: |
-          # create variables
-          CERTIFICATE_PATH="$RUNNER_TEMP/build_certificate.p12"
-          KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
+  # ----------------------------------------------------------------------------
+  # Build arm64 version of Emacs
+  # ----------------------------------------------------------------------------
 
-          # import certificate and provisioning profile from secrets
-          echo -n "$CERT_BASE64" | base64 --decode > "$CERTIFICATE_PATH"
+  build_arm64:
+    name: Build (arm64)
+    if: inputs.arm64
+    uses: ./.github/workflows/_build_emacs.yml
+    needs: [prepare]
+    with:
+      builder_ref: ${{ needs.prepare.outputs.builder_sha }}
+      os: "macos-14"
+      build_os: "macos-14" # Only macos-14 and later are ARM64.
+      artifact_prefix: "arm64-"
+      git_ref: ${{ inputs.git_ref }}
+      git_sha: ${{ inputs.git_sha }}
+      build_args: ${{ inputs.builder_args }}
+      test_build_name: ${{ inputs.test_build_name }}
+      test_release_type: ${{ inputs.test_release_type }}
+    secrets: inherit
 
-          # create temporary keychain
-          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
-          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+  release_arm64:
+    name: Release (arm64)
+    uses: ./.github/workflows/_release.yml
+    # Depend on both build_arm64 and build_x86_64, but only run if build_arm64
+    # was successful and a package was created. This ensure wait for all builds
+    # to complete before running any release jobs.
+    needs: [prepare, build_arm64, build_x86_64]
+    if: |
+      always() &&
+      needs.build_arm64.result == 'success' &&
+      needs.build_arm64.outputs.package_created &&
+      needs.build_x86_64.result != 'failure'
+    with:
+      builder_ref: ${{ needs.prepare.outputs.builder_sha }}
+      os: "macos-14" # Only macos-14 and later are ARM64.
+      plan_artifact: arm64-build-plan
+      dmg_artifact: arm64-dmg
 
-          # import certificate to keychain
-          security import "$CERTIFICATE_PATH" -P "$CERT_PASSWORD" -A \
-            -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
-          security list-keychain -d user -s "$KEYCHAIN_PATH"
-        env:
-          CERT_BASE64: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_P12_BASE64 }}
-          CERT_PASSWORD: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_PASSWORD }}
-          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-      - name: Sign, package and notarize build
-        run: >-
-          bin/emacs-builder package -v --plan build-plan.yml
-          --sign --remove-source-dir
-        env:
-          AC_USERNAME: ${{ secrets.AC_USERNAME }}
-          AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
-          AC_PROVIDER: ${{ secrets.AC_PROVIDER }}
-          AC_SIGN_IDENTITY: ${{ secrets.AC_SIGN_IDENTITY }}
-      - name: Upload disk image artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ inputs.artifact_prefix }}dmg
-          path: |
-            builds/*.dmg
-            builds/*.sha*
-          if-no-files-found: error
-      - name: Clean up keychain used for signing certificate
-        if: ${{ always() }}
-        run: |
-          security delete-keychain "$RUNNER_TEMP/app-signing.keychain-db"
+  # ----------------------------------------------------------------------------
+  # Trigger update casks workflow in homebrew tap
+  # ----------------------------------------------------------------------------
+
+  update_casks:
+    name: Update Casks
+    uses: ./.github/workflows/_update-casks.yml
+    # Depend on both release jobs, but only run if either of them was
+    # successful. This ensures we only run this job once all release jobs have
+    # been completed.
+    needs: [release_x86_64, release_arm64]
+    if: >-
+      always() &&
+      inputs.test_build_name == '' &&
+      contains(needs.*.result, 'success') &&
+      !contains(needs.*.result, 'failure')
+    secrets: inherit
