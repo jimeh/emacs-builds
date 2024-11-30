@@ -4,6 +4,10 @@ name: _build
 on:
   workflow_call:
     inputs:
+      should_run:
+        description: Whether or not to run the build job
+        type: boolean
+        default: false
       artifact_prefix:
         description: Artifact prefix
         type: string
@@ -103,7 +107,6 @@ jobs:
       check: ${{ steps.check.outputs.result }}
     steps:
       - name: Checkout build-emacs-for-macos repo
-        if: ${{ inputs.os != inputs.build_os }}
         uses: actions/checkout@v4
         with:
           repository: jimeh/build-emacs-for-macos
@@ -111,7 +114,7 @@ jobs:
       - uses: actions/setup-go@v5
         if: ${{ inputs.os != inputs.build_os }}
         with:
-          go-version: "1.21"
+          go-version: "1.23"
       - name: Build emacs-builder tool
         if: ${{ inputs.os != inputs.build_os }}
         run: make build
@@ -124,8 +127,11 @@ jobs:
       - name: Ensure emacs-builder is executable
         if: ${{ inputs.os == inputs.build_os }}
         run: chmod +x bin/emacs-builder
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: Plan build
         run: >-
+          nix develop --command
           bin/emacs-builder -l debug plan --output build-plan.yml
           --output-dir '${{ github.workspace }}/builds'
           ${{ needs.prepare.outputs.test_plan_args }}
@@ -163,34 +169,30 @@ jobs:
           repository: jimeh/build-emacs-for-macos
           ref: ${{ needs.prepare.outputs.builder_sha }}
           path: builder
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.2"
-      - name: Update homebrew
-        run: brew update
-      - name: Fix system python breaking homebrew
-        run: >-
-          find "$(brew --prefix)/bin" -type l
-          -ilname '*/Library/Frameworks/Python.framework/*'
-          -delete
-      - name: Install dependencies
-        run: make bootstrap
-        working-directory: builder
-        env:
-          BUNDLE_WITHOUT: "development"
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: Download build-plan artifact
         uses: actions/download-artifact@v4
         with:
           name: ${{ inputs.artifact_prefix }}build-plan
-          path: ./
+          path: ./builder/
+      - name: Install dependencies
+        run: >-
+          nix develop
+          --command make bootstrap-ruby
+        working-directory: builder
+        env:
+          BUNDLE_WITHOUT: "development"
       - name: Build Emacs
         run: >-
-          ./builder/build-emacs-for-macos
+          nix develop
+          --command ./build-emacs-for-macos
           --log-level debug
           --plan build-plan.yml
           --native-full-aot
           --no-self-sign
           ${{ inputs.build_args }}
+        working-directory: builder
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload unsigned app artifact
@@ -243,7 +245,7 @@ jobs:
           KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
 
           # import certificate and provisioning profile from secrets
-          echo -n "$CERT_BASE64" | base64 --decode --output "$CERTIFICATE_PATH"
+          echo -n "$CERT_BASE64" | base64 --decode > "$CERTIFICATE_PATH"
 
           # create temporary keychain
           security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"

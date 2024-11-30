@@ -13,15 +13,15 @@ on:
       builder_ref:
         description: "Git ref to checkout of build-emacs-for-macos"
         required: true
-        default: "v0.6.48"
+        default: "v0.6.50"
       builder_args:
         description: Custom arguments passed to build script
         required: false
         default: ""
       os:
-        description: 'Runner OS ("macos-12", "macos-13", or "macos-latest")'
+        description: 'Runner OS ("macos-13", "macos-14", or "macos-latest")'
         required: true
-        default: "macos-12"
+        default: "macos-13"
       test_build_name:
         description: "Test build name"
         required: false
@@ -62,7 +62,7 @@ jobs:
     needs: [prepare]
     with:
       os: ${{ github.event.inputs.os }}
-      build_os: "macos-12"
+      build_os: "macos-13"
       artifact_prefix: "x86_64-"
       git_ref: ${{ github.event.inputs.git_ref }}
       git_sha: ${{ github.event.inputs.git_sha }}
@@ -82,14 +82,19 @@ jobs:
   release_x86_64:
     name: Release (x86_64)
     uses: ./.github/workflows/_release.yml
-    needs: [build_x86_64]
-    if: ${{ needs.build_x86_64.outputs.package_created }}
+    # Depend on both build_x86_64 and build_arm64, but only run if build_x86_64
+    # was successful and a package was created. This ensure wait for all builds
+    # to complete before running any release jobs.
+    needs: [build_x86_64, build_arm64]
+    if: |
+      always() &&
+      needs.build_x86_64.result == 'success' &&
+      needs.build_x86_64.outputs.package_created &&
+      needs.build_arm64.result != 'failure'
     with:
       os: ${{ github.event.inputs.os }}
       plan_artifact: x86_64-build-plan
       dmg_artifact: x86_64-dmg
-      test_build_name: ${{ github.event.inputs.test_build_name }}
-      update_casks: true
     secrets:
       TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
 
@@ -124,13 +129,37 @@ jobs:
   release_arm64:
     name: Release (arm64)
     uses: ./.github/workflows/_release.yml
-    needs: [build_arm64]
-    if: ${{ needs.build_arm64.outputs.package_created }}
+    # Depend on both build_arm64 and build_x86_64, but only run if build_arm64
+    # was successful and a package was created. This ensure wait for all builds
+    # to complete before running any release jobs.
+    needs: [build_arm64, build_x86_64]
+    if: |
+      always() &&
+      needs.build_arm64.result == 'success' &&
+      needs.build_arm64.outputs.package_created &&
+      needs.build_x86_64.result != 'failure'
     with:
       os: ${{ github.event.inputs.os }}
       plan_artifact: arm64-build-plan
       dmg_artifact: arm64-dmg
-      test_build_name: ${{ github.event.inputs.test_build_name }}
-      update_casks: false
+    secrets:
+      TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
+
+  # ----------------------------------------------------------------------------
+  # Trigger update casks workflow in homebrew tap
+  # ----------------------------------------------------------------------------
+
+  update_casks:
+    name: Update Casks
+    uses: ./.github/workflows/_update-casks.yml
+    # Depend on both release jobs, but only run if either of them was
+    # successful. This ensures we only run this job once all release jobs have
+    # been completed.
+    needs: [release_x86_64, release_arm64]
+    if: >-
+      always() &&
+      github.event.inputs.test_build_name == '' &&
+      contains(needs.*.result, 'success') &&
+      !contains(needs.*.result, 'failure')
     secrets:
       TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}

@@ -1,6 +1,9 @@
 ---
 # Requires _prepare.yml and _build.yml re-usable workflows to have run.
 name: _release
+concurrency:
+  group: _release
+  cancel-in-progress: false
 on:
   workflow_call:
     inputs:
@@ -8,7 +11,7 @@ on:
         description: GitHub Actions runner OS
         type: string
         required: false
-        default: "macos-12"
+        default: "macos-13"
       plan_artifact:
         description: Name of artifact containing a emacs-builder plan yaml file
         type: string
@@ -17,15 +20,6 @@ on:
         description: Name of artifact containing a *.dmg files to release
         type: string
         required: true
-      test_build_name:
-        description: "Test build name"
-        type: string
-        required: false
-      update_casks:
-        description: "Update casks in homebrew tap?"
-        type: boolean
-        required: true
-        default: true
     secrets:
       TAP_REPO_TOKEN:
         description: Personal Access Token for Homebrew Tap repo
@@ -61,14 +55,5 @@ jobs:
           $(find builds -name '*.dmg' -or -name '*.sha256')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Trigger update casks workflow in homebrew tap
-        if: >-
-          steps.dmg.outputs.result != 'fail' &&
-          inputs.test_build_name == '' &&
-          inputs.update_casks
-        run: >-
-          gh workflow run --repo jimeh/homebrew-emacs-builds update-casks.yml
-        env:
-          GITHUB_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
       - run: echo 'No DMG artifact available, was there a new commit to build?'
         if: ${{ steps.dmg.outputs.result == 'fail' }}
