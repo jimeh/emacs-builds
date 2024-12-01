@@ -26,12 +26,12 @@
 ## Features
 
 - Self-contained Emacs.app application bundle, with no external dependencies.
-- Native compilation ([gccemacs][]), only in Emacs 28.x and later builds.
-- Native JSON parsing via libjansson.
+- Native compilation ([gccemacs][]).
+- Native JSON parsing.
 - SVG rendering via librsvg.
 - Various image formats are supported via macOS native image APIs.
-- Xwidget-webkit support is enabled, allowing access to a embedded WebKit-based
-  browser with `M-x xwidget-webkit-browse-url`.
+- Xwidget-webkit support, allowing access to a embedded WebKit-based browser
+  with `M-x xwidget-webkit-browse-url`.
 - Native XML parsing via libxml2.
 - Dynamic module loading.
 - Includes the [fix-window-role][], [system-appearance][], and
@@ -56,11 +56,13 @@
 
 ## System Requirements
 
-- macOS 13 Ventura or later for Apple Silicon builds.
-- macOS 12 Monterey or later for Intel builds, which can run on Apple Silicon
-  via Rosetta2.
+- Builds produced after 2024-11-30:
+  - macOS 11 or later.
+- Builds produced before 2024-11-30:
+  - macOS 13 Ventura or later for Apple Silicon builds.
+  - macOS 12 Monterey or later for Intel builds.
 - Xcode Command Line Tools to use native compilation in Emacs, available since
-  28.x.
+  Emacs 28.x builds.
 
 ## Installation
 
@@ -114,25 +116,8 @@ for at least a day or two without any obvious issues.
 
 ## Apple Silicon
 
-Native builds for Apple Silicon is supported, but currently GitHub's M1-based
-Actions Runners are prohibitively expensive for nightly builds. Intel builds
-though do work on Apple Silicon machines via Rosetta2, with a minor performance
-impact.
-
-Due to the costs, Apple Silicon builds are for now only scheduled for the 1st of
-each month. The `emacs-app-monthly` Homebrew Cask will always be pointing at a
-release that includes Intel and Apple Silicon builds.
-
-Builds for stable releases of Emacs will also include both Intel and Apple
-Silicon builds.
-
-### Costs
-
-At time of writing (2023-11-21), an average Apple Silicon build uses around 17
-minutes of billable time, at a cost of $0.16 USD per minute, that comes out to
-around $2.72 per build. I am considering enabling sponsorship on this repository
-in an effort to cover the costs for more frequent Apple Silicon builds, and will
-update here if/when I have any news.
+As of 2024-11-30, all builds include both Apple Silicon (arm64) and Intel
+(x86_64) artifacts.
 
 ## Use Emacs.app as `emacs` CLI Tool
 
@@ -173,13 +158,11 @@ use the alias from the above example.
 ## Build Process
 
 Building Emacs is done using the [jimeh/build-emacs-for-macos][] build script,
-executed within a GitHub Actions [workflow][]. This is why macOS 11.x (Big Sur)
-or later is required, as it's the oldest version of macOS available in GitHub
-Actions.
+executed within a GitHub Actions [workflow][].
 
 [jimeh/build-emacs-for-macos]: https://github.com/jimeh/build-emacs-for-macos
 [workflow]:
-  https://github.com/jimeh/emacs-builds/blob/main/.github/workflows/build.yml
+  https://github.com/jimeh/emacs-builds/blob/main/.github/workflows/nightly-master.yml
 
 Full history for all builds is available on GitHub Actions [here][actions].
 Build logs are only retained by GitHub for 90 days though.
@@ -218,6 +201,19 @@ Please see [Issues][] for details of things to come, or to report issues.
 [issues]: https://github.com/jimeh/emacs-builds/issues
 
 ## News / Recent Changes
+
+### 2024-12-01 — Apple Silicon builds all the time, more stability via Nix
+
+GitHub's standard runner for macOS 14 and later runs on Apple Silicon, and are
+free to use for public repositories. As such we now use `runs-on: macos-13` for
+Intel builds, and `runs-on: macos-14` for Apple Silicon builds. And we do so on
+all builds, nightlies, pretests, and stable.
+
+Additionally, macOS 11 Big Sur is now the minimum required version again, for
+both Intel and Apple Silicon builds. This is due to switching from Homebrew to
+Nix for managing build-time dependencies. And it supports easily switching
+between different macOS SDK versions, meaning we can target an SDK that is older
+than the OS we are creating the builds on.
 
 ### 2023-11-22 — Apple Silicon builds, drop macOS 11 support
 
