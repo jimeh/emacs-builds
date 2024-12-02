@@ -5,30 +5,41 @@ on:
     inputs:
       builder_ref:
         description: Git ref to checkout of build-emacs-for-macos
-        required: true
+        required: false
         type: string
+        default: ""
     outputs:
+      builder_ref:
+        description: Git ref of build-emacs-for-macos at builder_ref
+        value: ${{ jobs.builder-sha.outputs.ref }}
       builder_sha:
-        description: Git SHA of build-emacs-for-macos at builder_ref
+        description: Git commit SHA of build-emacs-for-macos at builder_ref
         value: ${{ jobs.builder-sha.outputs.sha }}
 
 jobs:
   builder-sha:
     runs-on: "macos-13"
     outputs:
-      sha: ${{ steps.builder_sha.outputs.sha }}
+      ref: ${{ steps.ref.outputs.ref }}
+      sha: ${{ steps.sha.outputs.sha }}
     steps:
+      - name: Default git ref check
+        id: ref
+        run: |
+          DEFAULT_BUILDER_REF="v0.6.54"
+          BUILDER_REF="${{ inputs.builder_ref }}"
+          echo "ref=${BUILDER_REF:-$DEFAULT_BUILDER_REF=}" >> "$GITHUB_OUTPUT"
       - name: Checkout build-emacs-for-macos repo
         uses: actions/checkout@v4
         with:
           repository: jimeh/build-emacs-for-macos
-          ref: ${{ inputs.builder_ref }}
+          ref: ${{ steps.ref.outputs.ref }}
       - name: Store builder Git SHA
-        id: builder_sha
+        id: sha
         run: |
           BUILDER_SHA="$(git rev-parse HEAD)"
           echo "$BUILDER_SHA" > build-emacs-for-macos-git-sha.txt
-          echo "sha=$BUILDER_SHA" >> $GITHUB_OUTPUT
+          echo "sha=$BUILDER_SHA" >> "$GITHUB_OUTPUT"
           echo "Builder ref ${{ inputs.builder_ref }} resolved to" \
                "commit SHA: $BUILDER_SHA"
       - name: Upload builder git SHA artifact
@@ -58,7 +69,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: jimeh/build-emacs-for-macos
-          ref: ${{ inputs.builder_ref }}
+          ref: ${{ needs.builder-sha.outputs.ref }}
           fetch-depth: 0
       - name: Setup Go
         if: steps.cache.outputs.cache-hit != 'true'

@@ -16,5 +16,4 @@ jobs:
     with:
       git_ref: "master"
       git_sha: ${{ inputs.git_sha }}
-      builder_ref: "v0.6.54"
     secrets: inherit

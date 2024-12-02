@@ -11,9 +11,9 @@ on:
         description: Override Emacs git commit SHA to build
         required: false
       builder_ref:
-        description: "Git ref to checkout of build-emacs-for-macos"
-        required: true
-        default: "v0.6.54"
+        description: "Override git ref to checkout of build-emacs-for-macos"
+        required: false
+        default: ""
       builder_args:
         description: Custom arguments passed to build script
         required: false
