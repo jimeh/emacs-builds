@@ -8,20 +8,6 @@ on:
       git_sha:
         description: Override Emacs git commit SHA to build
         required: false
-      builder_ref:
-        description: "Git ref to checkout of build-emacs-for-macos"
-        required: true
-        default: "v0.6.54"
-      x86_64:
-        description: "Build x86_64 version of Emacs"
-        required: false
-        default: true
-        type: boolean
-      arm64:
-        description: "Build arm64 version of Emacs"
-        required: false
-        default: true
-        type: boolean
 
 jobs:
   build:
@@ -30,7 +16,5 @@ jobs:
     with:
       git_ref: "master"
       git_sha: ${{ inputs.git_sha }}
-      builder_ref: ${{ inputs.builder_ref }}
-      x86_64: ${{ inputs.x86_64 }}
-      arm64: ${{ inputs.arm64 }}
+      builder_ref: "v0.6.54"
     secrets: inherit
