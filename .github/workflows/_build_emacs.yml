@@ -34,6 +34,10 @@ on:
         description: Custom arguments passed to build script
         type: string
         required: false
+      build_variant:
+        description: "Optional build number used as version suffix"
+        type: string
+        required: false
       test_build_name:
         description: "Test build name"
         type: string
@@ -77,6 +81,11 @@ jobs:
         if: inputs.test_build_name != ''
         run: >-
           echo "args=--test-build '${{ inputs.test_build_name }}' --test-release-type '${{ inputs.test_release_type }}'" >> "$GITHUB_OUTPUT"
+      - name: Prepare build variant args
+        id: build_variant_args
+        if: inputs.build_variant != ''
+        run: >-
+          echo "args=--build-variant ${{ inputs.build_variant }}" >> "$GITHUB_OUTPUT"
       - name: Set git SHA override
         id: emacs_sha
         if: inputs.git_sha != ''
@@ -87,6 +96,7 @@ jobs:
           nix develop --command
           bin/emacs-builder -l debug plan --output build-plan.yml
           --output-dir '${{ github.workspace }}/builds'
+          ${{ steps.build_variant_args.outputs.args }}
           ${{ steps.test_plan_args.outputs.args }}
           ${{ steps.emacs_sha.outputs.sha }}
           '${{ inputs.git_ref }}'

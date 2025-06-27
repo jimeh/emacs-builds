@@ -20,6 +20,10 @@ on:
         required: false
         default: ""
         type: string
+      build_variant:
+        description: "Optional build number used as version suffix"
+        required: false
+        type: string
       test_build_name:
         description: "Test build name"
         required: false
@@ -65,6 +69,7 @@ jobs:
       git_ref: ${{ inputs.git_ref }}
       git_sha: ${{ inputs.git_sha }}
       build_args: ${{ inputs.builder_args }}
+      build_variant: ${{ inputs.build_variant }}
       test_build_name: ${{ inputs.test_build_name }}
       test_release_type: ${{ inputs.test_release_type }}
     secrets: inherit
@@ -104,6 +109,7 @@ jobs:
       git_ref: ${{ inputs.git_ref }}
       git_sha: ${{ inputs.git_sha }}
       build_args: ${{ inputs.builder_args }}
+      build_variant: ${{ inputs.build_variant }}
       test_build_name: ${{ inputs.test_build_name }}
       test_release_type: ${{ inputs.test_release_type }}
     secrets: inherit

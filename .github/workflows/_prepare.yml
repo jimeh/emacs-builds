@@ -26,7 +26,7 @@ jobs:
       - name: Default git ref check
         id: ref
         run: |
-          DEFAULT_BUILDER_REF="v0.6.57"
+          DEFAULT_BUILDER_REF="v0.6.58"
           BUILDER_REF="${{ inputs.builder_ref }}"
           echo "ref=${BUILDER_REF:-$DEFAULT_BUILDER_REF}" >> "$GITHUB_OUTPUT"
       - name: Checkout build-emacs-for-macos repo

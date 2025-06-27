@@ -26,6 +26,10 @@ on:
         description: "prerelease or draft"
         required: false
         default: ""
+      build_variant:
+        description: "Optional build number used as version suffix"
+        required: false
+        type: string
       x86_64:
         description: "Build x86_64 version of Emacs"
         required: false
@@ -46,6 +50,7 @@ jobs:
       git_sha: ${{ inputs.git_sha }}
       builder_ref: ${{ inputs.builder_ref }}
       builder_args: ${{ inputs.builder_args }}
+      build_variant: ${{ inputs.build_variant }}
       test_build_name: ${{ inputs.test_build_name }}
       test_release_type: ${{ inputs.test_release_type }}
       x86_64: ${{ inputs.x86_64 }}
