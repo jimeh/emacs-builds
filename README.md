@@ -103,7 +103,7 @@ for at least a day or two without any obvious issues.
      brew install --cask emacs-app-nightly
      ```
    - `emacs-app-monthly` — Build of Emacs from the `master` branch, updated on
-     the 1st of each month. These includes native Apple Silicon support.
+     the 1st of each month.
      ```
      brew install --cask emacs-app-monthly
      ```
