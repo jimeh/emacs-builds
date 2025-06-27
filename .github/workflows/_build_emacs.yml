@@ -70,8 +70,8 @@ jobs:
           path: bin
       - name: Ensure emacs-builder is executable
         run: chmod +x bin/emacs-builder
-      - uses: nixbuild/nix-quick-install-action@v29
-      - uses: nix-community/cache-nix-action@v5
+      - uses: nixbuild/nix-quick-install-action@v32
+      - uses: nix-community/cache-nix-action@v6
         with:
           primary-key: nix-${{ runner.arch }}-${{ hashFiles('**/flake.*') }}
       - name: Install dependencies
@@ -132,8 +132,8 @@ jobs:
           repository: jimeh/build-emacs-for-macos
           ref: ${{ inputs.builder_ref }}
           path: builder
-      - uses: nixbuild/nix-quick-install-action@v29
-      - uses: nix-community/cache-nix-action@v5
+      - uses: nixbuild/nix-quick-install-action@v32
+      - uses: nix-community/cache-nix-action@v6
         with:
           primary-key: nix-${{ runner.arch }}-${{ hashFiles('**/flake.*') }}
       - name: Download build-plan artifact
