@@ -49,11 +49,11 @@ jobs:
           name: ${{ inputs.dmg_artifact }}
           path: builds
       - name: Publish disk images to a GitHub Release
-        if: steps.dmg.outputs.result != 'fail'
+        if: steps.dmg.outcome != 'failure'
         run: >-
           bin/emacs-builder -l debug release --plan build-plan.yml publish
           $(find builds -name '*.dmg' -or -name '*.sha256')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: echo 'No DMG artifact available, was there a new commit to build?'
-        if: steps.dmg.outputs.result == 'fail'
+        if: steps.dmg.outcome == 'failure'
