@@ -82,37 +82,32 @@ for at least a day or two without any obvious issues.
 
 ### Homebrew Cask
 
-1. Install the
-   [`jimeh/emacs-builds`](https://github.com/jimeh/homebrew-emacs-builds)
-   Homebrew tap:
-   ```
-   brew tap jimeh/emacs-builds
-   ```
-2. Install one of the available casks:
-   - `emacs-app` — Latest stable release of Emacs.
-     ```
-     brew install --cask emacs-app
-     ```
-   - `emacs-app-pretest` — Latest pretest build of Emacs.
-     ```
-     brew install --cask emacs-app-pretest
-     ```
-   - `emacs-app-nightly` — Build of Emacs from the `master` branch, updated
-     every night.
-     ```
-     brew install --cask emacs-app-nightly
-     ```
-   - `emacs-app-monthly` — Build of Emacs from the `master` branch, updated on
-     the 1st of each month.
-     ```
-     brew install --cask emacs-app-monthly
-     ```
-   - `emacs-app-good` for the latest known good nightly build listed on [#7][7]:
-     ```
-     brew install --cask emacs-app-good
-     ```
+The [`jimeh/emacs-builds`](https://github.com/jimeh/homebrew-emacs-builds)
+Homebrew Tap provides the following casks:
 
-[7]: https://github.com/jimeh/emacs-builds/issues/7
+- `jimeh/emacs-builds/emacs-app` — Latest stable release of Emacs.
+  ```bash
+  brew install --cask jimeh/emacs-builds/emacs-app
+  ```
+- `jimeh/emacs-builds/emacs-app-pretest` — Latest pretest build of Emacs.
+  ```bash
+  brew install --cask jimeh/emacs-builds/emacs-app-pretest
+  ```
+- `jimeh/emacs-builds/emacs-app-nightly` — Build of Emacs from the `master`
+  branch, updated every night.
+  ```bash
+  brew install --cask jimeh/emacs-builds/emacs-app-nightly
+  ```
+- `jimeh/emacs-builds/emacs-app-monthly` — Build of Emacs from the `master`
+  branch, updated on the 1st of each month.
+  ```bash
+  brew install --cask jimeh/emacs-builds/emacs-app-monthly
+  ```
+- `jimeh/emacs-builds/emacs-app-good` for the latest known good nightly build
+  listed on [#7][7]:
+  ```bash
+  brew install --cask jimeh/emacs-builds/emacs-app-good
+  ```
 
 ## Apple Silicon
 
@@ -191,8 +186,6 @@ origin=Developer ID Application: Jim Myhrberg (5HX66GF82Z)
 All builds also come with a SHA256 checksum file, which itself can be double
 checked against the SHA256 checksum log output from the packaging step of the
 GitHub Actions workflow run which produced the build.
-
-[emacs-mirror/emacs]: https://github.com/emacs-mirror/emacs
 
 ## Issues / To-Do
 
