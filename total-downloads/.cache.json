@@ -80,8 +80,8 @@
       "Emacs.2025-02-23.8ac894e.emacs-30-1.macOS-11.x86_64.dmg": 221
     },
     "Emacs-30.1-1": {
-      "Emacs.2025-02-23.8ac894e.emacs-30-1-1.macOS-11.arm64.dmg": 265,
-      "Emacs.2025-02-23.8ac894e.emacs-30-1-1.macOS-11.x86_64.dmg": 44
+      "Emacs.2025-02-23.8ac894e.emacs-30-1-1.macOS-11.arm64.dmg": 267,
+      "Emacs.2025-02-23.8ac894e.emacs-30-1-1.macOS-11.x86_64.dmg": 45
     },
     "Emacs-30.1.90-pretest": {
       "Emacs.2025-05-18.1136aed.emacs-30-1-90-pretest.macOS-11.arm64.dmg": 118,
@@ -5182,7 +5182,7 @@
       "Emacs.2025-06-30.0ac2112.master.macOS-11.x86_64.dmg": 1
     },
     "Emacs.2025-07-01.f732a44.master": {
-      "Emacs.2025-07-01.f732a44.master.macOS-11.arm64.dmg": 30,
+      "Emacs.2025-07-01.f732a44.master.macOS-11.arm64.dmg": 31,
       "Emacs.2025-07-01.f732a44.master.macOS-11.x86_64.dmg": 2
     },
     "Emacs.2025-07-02.f48c283.master": {
