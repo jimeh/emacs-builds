@@ -80,7 +80,7 @@
       "Emacs.2025-02-23.8ac894e.emacs-30-1.macOS-11.x86_64.dmg": 221
     },
     "Emacs-30.1-1": {
-      "Emacs.2025-02-23.8ac894e.emacs-30-1-1.macOS-11.arm64.dmg": 267,
+      "Emacs.2025-02-23.8ac894e.emacs-30-1-1.macOS-11.arm64.dmg": 275,
       "Emacs.2025-02-23.8ac894e.emacs-30-1-1.macOS-11.x86_64.dmg": 45
     },
     "Emacs-30.1.90-pretest": {
@@ -3848,7 +3848,7 @@
       "Emacs.2024-02-11.052c2ce.master.macOS-12.x86_64.dmg": 5
     },
     "Emacs.2024-02-12.40994d2.master": {
-      "Emacs.2024-02-12.40994d2.master.macOS-12.x86_64.dmg": 5
+      "Emacs.2024-02-12.40994d2.master.macOS-12.x86_64.dmg": 6
     },
     "Emacs.2024-02-13.7c23234.master": {
       "Emacs.2024-02-13.7c23234.master.macOS-12.x86_64.dmg": 4
@@ -5282,7 +5282,7 @@
     },
     "Emacs.2025-07-30.45a5fae.master": {
       "Emacs.2025-07-30.45a5fae.master.macOS-11.arm64.dmg": 17,
-      "Emacs.2025-07-30.45a5fae.master.macOS-11.x86_64.dmg": 3
+      "Emacs.2025-07-30.45a5fae.master.macOS-11.x86_64.dmg": 4
     },
     "Test Builds (fix-dupe-rpaths)": {
       "Emacs.2025-06-26.a002ca7.master.macOS-11.arm64.test.fix-dupe-rpaths.dmg": 4,
