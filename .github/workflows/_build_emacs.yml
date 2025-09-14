@@ -158,6 +158,9 @@ jobs:
           --plan build-plan.yml
           --native-full-aot
           --no-self-sign
+          --icon-uri 'https://github.com/jimeh/emacs-liquid-glass-icons/releases/download/v1.0.1/EmacsLG1-Default.icns'
+          --tahoe-icon-uri 'https://github.com/jimeh/emacs-liquid-glass-icons/releases/download/v1.0.1/Assets.car'
+          --tahoe-icon-name EmacsLG1
           ${{ inputs.build_args }}
         working-directory: builder
         env:
