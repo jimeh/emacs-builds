@@ -88,7 +88,7 @@
       "Emacs.2025-05-18.1136aed.emacs-30-1-90-pretest.macOS-11.x86_64.dmg": 4
     },
     "Emacs-30.2": {
-      "Emacs.2025-08-14.636f166.emacs-30-2.macOS-11.arm64.dmg": 392,
+      "Emacs.2025-08-14.636f166.emacs-30-2.macOS-11.arm64.dmg": 397,
       "Emacs.2025-08-14.636f166.emacs-30-2.macOS-11.x86_64.dmg": 70
     },
     "Emacs.2021-05-08.bb8b8d7.master": {
@@ -5455,8 +5455,12 @@
     "Emacs.2025-09-28.38c658d.master": {
       "Emacs.2025-09-28.38c658d.master.macOS-11.arm64.dmg": 7
     },
+    "Emacs.2025-09-29.40a22ce.master": {
+      "Emacs.2025-09-29.40a22ce.master.macOS-11.arm64.dmg": 5,
+      "Emacs.2025-09-29.40a22ce.master.macOS-11.x86_64.dmg": 2
+    },
     "Test Builds (30-2-deps-upgrade)": {
-      "Emacs.2025-08-14.636f166.emacs-30-2.macOS-11.arm64.test.30-2-deps-upgrade.dmg": 16,
+      "Emacs.2025-08-14.636f166.emacs-30-2.macOS-11.arm64.test.30-2-deps-upgrade.dmg": 17,
       "Emacs.2025-08-14.636f166.emacs-30-2.macOS-11.x86_64.test.30-2-deps-upgrade.dmg": 3
     },
     "Test Builds (fix-dupe-rpaths)": {
