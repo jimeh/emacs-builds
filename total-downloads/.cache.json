@@ -92,8 +92,8 @@
       "Emacs.2025-08-14.636f166.emacs-30-2.macOS-11.x86_64.dmg": 71
     },
     "Emacs-30.2-1": {
-      "Emacs.2025-08-14.636f166.emacs-30-2-1.macOS-11.arm64.dmg": 65,
-      "Emacs.2025-08-14.636f166.emacs-30-2-1.macOS-11.x86_64.dmg": 14
+      "Emacs.2025-08-14.636f166.emacs-30-2-1.macOS-11.arm64.dmg": 76,
+      "Emacs.2025-08-14.636f166.emacs-30-2-1.macOS-11.x86_64.dmg": 15
     },
     "Emacs.2021-05-08.bb8b8d7.master": {
       "Emacs.2021-05-08.bb8b8d7.master.macOS-10-15.x86_64.tbz": 14
@@ -5180,7 +5180,7 @@
       "Emacs.2025-06-26.a002ca7.master.macOS-11.x86_64.dmg": 1
     },
     "Emacs.2025-06-27.a132ca9.master": {
-      "Emacs.2025-06-27.a132ca9.master.macOS-11.arm64.dmg": 38,
+      "Emacs.2025-06-27.a132ca9.master.macOS-11.arm64.dmg": 40,
       "Emacs.2025-06-27.a132ca9.master.macOS-11.x86_64.dmg": 8
     },
     "Emacs.2025-06-29.b13c583.master": {
@@ -5481,7 +5481,8 @@
       "Emacs.2025-10-04.9ccef79.master.macOS-11.arm64.dmg": 6
     },
     "Emacs.2025-10-05.129119a.master": {
-      "Emacs.2025-10-05.129119a.master.macOS-11.x86_64.dmg": 2
+      "Emacs.2025-10-05.129119a.master.macOS-11.arm64.dmg": 3,
+      "Emacs.2025-10-05.129119a.master.macOS-11.x86_64.dmg": 3
     },
     "Test Builds (30-2-deps-upgrade)": {
       "Emacs.2025-08-14.636f166.emacs-30-2.macOS-11.arm64.test.30-2-deps-upgrade.dmg": 17,
