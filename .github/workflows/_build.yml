@@ -63,8 +63,8 @@ jobs:
     needs: [prepare]
     with:
       builder_ref: ${{ needs.prepare.outputs.builder_sha }}
-      os: "macos-13"
-      build_os: "macos-13" # Only macos-13 and earlier are x86_64.
+      os: "macos-15-intel"
+      build_os: "macos-15-intel"
       artifact_prefix: "x86_64-"
       git_ref: ${{ inputs.git_ref }}
       git_sha: ${{ inputs.git_sha }}
@@ -88,7 +88,7 @@ jobs:
       needs.build_arm64.result != 'failure'
     with:
       builder_ref: ${{ needs.prepare.outputs.builder_sha }}
-      os: "macos-13" # Only macos-13 and earlier are x86_64.
+      os: "macos-15-intel"
       plan_artifact: x86_64-build-plan
       dmg_artifact: x86_64-dmg
 
@@ -103,8 +103,8 @@ jobs:
     needs: [prepare]
     with:
       builder_ref: ${{ needs.prepare.outputs.builder_sha }}
-      os: "macos-14"
-      build_os: "macos-14" # Only macos-14 and later are ARM64.
+      os: "macos-15"
+      build_os: "macos-15"
       artifact_prefix: "arm64-"
       git_ref: ${{ inputs.git_ref }}
       git_sha: ${{ inputs.git_sha }}
@@ -128,7 +128,7 @@ jobs:
       needs.build_x86_64.result != 'failure'
     with:
       builder_ref: ${{ needs.prepare.outputs.builder_sha }}
-      os: "macos-14" # Only macos-14 and later are ARM64.
+      os: "macos-15"
       plan_artifact: arm64-build-plan
       dmg_artifact: arm64-dmg
 

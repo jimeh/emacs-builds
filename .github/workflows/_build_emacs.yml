@@ -12,12 +12,12 @@ on:
         description: GitHub Actions runner OS
         type: string
         required: false
-        default: "macos-13"
+        default: "macos-15"
       build_os:
         description: Target OS to build for
         type: string
         required: false
-        default: "macos-13"
+        default: "macos-15"
       artifact_prefix:
         description: Artifact prefix for build_os
         type: string
