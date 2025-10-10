@@ -11,7 +11,7 @@
 [![GitHub release (known good nightly)](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjimeh%2Fhomebrew-emacs-builds%2Fmeta%2FCasks%2Femacs-app-good%2Fshield.json)](https://github.com/jimeh/emacs-builds/issues/7)
 [![GitHub issues](https://img.shields.io/github/issues-raw/jimeh/emacs-builds?style=flat&logo=github&logoColor=white)](https://github.com/jimeh/emacs-builds/issues)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/jimeh/emacs-builds?style=flat&logo=github&logoColor=white)](https://github.com/jimeh/emacs-builds/pulls)
-[![GitHub all releases](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjimeh%2Femacs-builds%2Fmeta%2Ftotal-downloads%2Fshield.json)](https://github.com/jimeh/emacs-builds/releases)
+[![Total downloads](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjimeh%2Femacs-builds%2Fmeta%2Ftotal-downloads%2Fshield.json)](https://github.com/jimeh/emacs-builds/releases)
 
 **Self-contained Emacs.app builds for macOS, with native-compilation support.**
 
