@@ -1,6 +1,6 @@
 <div align="center">
 
-<img width="196px" src="https://raw.githubusercontent.com/jimeh/emacs-liquid-glass-icons/main/Icons/Exports/EmacsLG1-Default.iconset/icon_512x512.png" alt="Logo">
+<img width="196px" src="https://raw.githubusercontent.com/jimeh/emacs-builds/main/img/EmacsLG1.png" alt="Logo">
 
 # Emacs Builds
 
