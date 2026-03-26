@@ -6027,10 +6027,11 @@
       "Emacs.2026-03-14.f591810.master.macOS-11.arm64.dmg": 4
     },
     "Emacs.2026-03-15.e9e9c7c.master": {
-      "Emacs.2026-03-15.e9e9c7c.master.macOS-11.arm64.dmg": 3
+      "Emacs.2026-03-15.e9e9c7c.master.macOS-11.arm64.dmg": 4,
+      "Emacs.2026-03-15.e9e9c7c.master.macOS-11.x86_64.dmg": 1
     },
     "Emacs.2026-03-16.f869636.master": {
-      "Emacs.2026-03-16.f869636.master.macOS-11.arm64.dmg": 10,
+      "Emacs.2026-03-16.f869636.master.macOS-11.arm64.dmg": 14,
       "Emacs.2026-03-16.f869636.master.macOS-11.x86_64.dmg": 2
     },
     "Test Builds (30-2-deps-upgrade)": {
