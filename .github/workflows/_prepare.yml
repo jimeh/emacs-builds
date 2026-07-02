@@ -16,6 +16,9 @@ on:
         description: Git commit SHA of build-emacs-for-macos at builder_ref
         value: ${{ jobs.builder-sha.outputs.sha }}
 
+permissions:
+  contents: read
+
 jobs:
   builder-sha:
     runs-on: "macos-15"
@@ -27,23 +30,28 @@ jobs:
         id: ref
         run: |
           DEFAULT_BUILDER_REF="v0.6.63"
-          BUILDER_REF="${{ inputs.builder_ref }}"
+          BUILDER_REF="$BUILDER_REF_INPUT"
           echo "ref=${BUILDER_REF:-$DEFAULT_BUILDER_REF}" >> "$GITHUB_OUTPUT"
+        env:
+          BUILDER_REF_INPUT: ${{ inputs.builder_ref }}
       - name: Checkout build-emacs-for-macos repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           repository: jimeh/build-emacs-for-macos
           ref: ${{ steps.ref.outputs.ref }}
+          persist-credentials: false
       - name: Store builder Git SHA
         id: sha
         run: |
           BUILDER_SHA="$(git rev-parse HEAD)"
           echo "$BUILDER_SHA" > build-emacs-for-macos-git-sha.txt
           echo "sha=$BUILDER_SHA" >> "$GITHUB_OUTPUT"
-          echo "Builder ref ${{ inputs.builder_ref }} resolved to" \
+          echo "Builder ref $BUILDER_REF resolved to" \
                "commit SHA: $BUILDER_SHA"
+        env:
+          BUILDER_REF: ${{ steps.ref.outputs.ref }}
       - name: Upload builder git SHA artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: build-emacs-for-macos-git-sha
           path: build-emacs-for-macos-git-sha.txt
@@ -60,20 +68,21 @@ jobs:
     steps:
       - name: Cache emacs-builder (${{ runner.arch }})
         id: cache
-        uses: actions/cache@v4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: bin/emacs-builder
           key: emacs-builder-${{ runner.arch }}-${{ needs.builder-sha.outputs.sha }}-bin
       - name: Checkout build-emacs-for-macos repo
         if: steps.cache.outputs.cache-hit != 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           repository: jimeh/build-emacs-for-macos
           ref: ${{ needs.builder-sha.outputs.ref }}
           fetch-depth: 0
+          persist-credentials: false
       - name: Setup Go
         if: steps.cache.outputs.cache-hit != 'true'
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
         with:
           go-version: "1.23"
       - name: Build emacs-builder tool
@@ -84,7 +93,7 @@ jobs:
         run: chmod +x bin/emacs-builder
       - run: bin/emacs-builder --version
       - name: Upload emacs-builder artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: emacs-builder-${{ runner.arch }}
           path: bin/emacs-builder

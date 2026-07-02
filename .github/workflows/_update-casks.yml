@@ -11,6 +11,11 @@ on:
         type: string
         required: false
         default: "ubuntu-latest"
+    secrets:
+      TAP_REPO_TOKEN:
+        required: true
+
+permissions: {}
 
 jobs:
   emacs-builds:

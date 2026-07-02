@@ -9,11 +9,25 @@ on:
         description: Override Emacs git commit SHA to build
         required: false
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Build
     uses: ./.github/workflows/_build.yml
+    permissions:
+      contents: write
     with:
       git_ref: "master"
       git_sha: ${{ inputs.git_sha }}
-    secrets: inherit
+    secrets:
+      AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+      AC_PROVIDER: ${{ secrets.AC_PROVIDER }}
+      AC_USERNAME: ${{ secrets.AC_USERNAME }}
+      APPLE_DEVELOPER_CERTIFICATE_P12_BASE64: >-
+        ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_P12_BASE64 }}
+      APPLE_DEVELOPER_CERTIFICATE_PASSWORD: >-
+        ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_PASSWORD }}
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}

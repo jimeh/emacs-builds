@@ -1,0 +1,31 @@
+[settings]
+minimum_release_age = "3d"
+
+[tools]
+actionlint = "latest"
+pinact = "latest"
+zizmor = "latest"
+
+[tasks.check]
+description = "Run fast local checks"
+depends = ["check:workflows"]
+
+[tasks."check:workflows"]
+description = "Check GitHub Actions workflows"
+run = [
+  "actionlint",
+  "zizmor --offline .",
+  "pinact run --fix=false --no-api",
+]
+
+[tasks."pin:actions"]
+description = "Update and pin GitHub Actions with pinact"
+run = "pinact run --update"
+
+[tasks."pin:actions:check"]
+description = "Check GitHub Actions pins without GitHub API calls"
+run = "pinact run --fix=false --no-api"
+
+[tasks."pin:actions:audit"]
+description = "Audit GitHub Actions pins and minimum release age"
+run = "pinact run --check"

@@ -50,7 +50,23 @@ on:
     outputs:
       package_created:
         description: "Whether or not a package was created"
-        value: ${{ jobs.package.result == 'success' }}
+        value: ${{ jobs.package.outputs.package_created }}
+    secrets:
+      AC_PASSWORD:
+        required: true
+      AC_PROVIDER:
+        required: true
+      AC_USERNAME:
+        required: true
+      APPLE_DEVELOPER_CERTIFICATE_P12_BASE64:
+        required: true
+      APPLE_DEVELOPER_CERTIFICATE_PASSWORD:
+        required: true
+      KEYCHAIN_PASSWORD:
+        required: true
+
+permissions:
+  contents: read
 
 jobs:
   plan:
@@ -59,53 +75,60 @@ jobs:
       check: ${{ steps.check.outputs.result }}
     steps:
       - name: Checkout build-emacs-for-macos repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           repository: jimeh/build-emacs-for-macos
           ref: ${{ inputs.builder_ref }}
+          persist-credentials: false
       - name: Download pre-built emacs-builder artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: emacs-builder-${{ runner.arch }}
           path: bin
       - name: Ensure emacs-builder is executable
         run: chmod +x bin/emacs-builder
-      - uses: nixbuild/nix-quick-install-action@v32
-      - uses: nix-community/cache-nix-action@v6
+      - uses: nixbuild/nix-quick-install-action@9f63be77f412a248c9d9a65a4c82cf066cdf8f0c # v35
+      - uses: nix-community/cache-nix-action@7df957e333c1e5da7721f60227dbba6d06080569 # v7.0.2
         with:
           primary-key: nix-${{ runner.arch }}-${{ hashFiles('**/flake.*') }}
       - name: Install dependencies
         run: nix develop --command nix flake metadata
-      - name: Prepare plan test args
-        id: test_plan_args
-        if: inputs.test_build_name != ''
-        run: >-
-          echo "args=--test-build '${{ inputs.test_build_name }}' --test-release-type '${{ inputs.test_release_type }}'" >> "$GITHUB_OUTPUT"
-      - name: Prepare build variant args
-        id: build_variant_args
-        if: inputs.build_variant != ''
-        run: >-
-          echo "args=--build-variant ${{ inputs.build_variant }}" >> "$GITHUB_OUTPUT"
-      - name: Set git SHA override
-        id: emacs_sha
-        if: inputs.git_sha != ''
-        run: >-
-          echo "sha=--sha '${{ inputs.git_sha }}'" >> "$GITHUB_OUTPUT"
       - name: Plan build
-        run: >-
-          nix develop --command
-          bin/emacs-builder -l debug plan --output build-plan.yml
-          --output-dir '${{ github.workspace }}/builds'
-          ${{ steps.build_variant_args.outputs.args }}
-          ${{ steps.test_plan_args.outputs.args }}
-          ${{ steps.emacs_sha.outputs.sha }}
-          '${{ inputs.git_ref }}'
+        run: |
+          args=()
+
+          if [ -n "$BUILD_VARIANT" ]; then
+            args+=(--build-variant "$BUILD_VARIANT")
+          fi
+
+          if [ -n "$TEST_BUILD_NAME" ]; then
+            args+=(
+              --test-build "$TEST_BUILD_NAME"
+              --test-release-type "$TEST_RELEASE_TYPE"
+            )
+          fi
+
+          if [ -n "$GIT_SHA" ]; then
+            args+=(--sha "$GIT_SHA")
+          fi
+
+          args+=("$GIT_REF")
+
+          nix develop --command \
+            bin/emacs-builder -l debug plan --output build-plan.yml \
+            --output-dir "$GITHUB_WORKSPACE/builds" \
+            "${args[@]}"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BUILD_VARIANT: ${{ inputs.build_variant }}
+          GITHUB_TOKEN: ${{ github.token }}
+          GIT_REF: ${{ inputs.git_ref }}
+          GIT_SHA: ${{ inputs.git_sha }}
+          TEST_BUILD_NAME: ${{ inputs.test_build_name }}
+          TEST_RELEASE_TYPE: ${{ inputs.test_release_type }}
       - name: Show plan
         run: cat build-plan.yml
       - name: Upload build-plan artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ inputs.artifact_prefix }}build-plan
           path: build-plan.yml
@@ -114,9 +137,13 @@ jobs:
         id: check
         continue-on-error: true
         run: |
-          echo "result=$((bin/emacs-builder -l debug release --plan build-plan.yml check && echo 'ok') || echo 'fail')" >> "$GITHUB_OUTPUT"
+          if bin/emacs-builder -l debug release --plan build-plan.yml check; then
+            echo "result=ok" >> "$GITHUB_OUTPUT"
+          else
+            echo "result=fail" >> "$GITHUB_OUTPUT"
+          fi
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
       - run: echo 'Planned release already seems to exist.'
         if: steps.check.outputs.result == 'ok'
 
@@ -127,17 +154,18 @@ jobs:
     if: needs.plan.outputs.check == 'fail'
     steps:
       - name: Checkout build-emacs-for-macos repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           repository: jimeh/build-emacs-for-macos
           ref: ${{ inputs.builder_ref }}
           path: builder
-      - uses: nixbuild/nix-quick-install-action@v32
-      - uses: nix-community/cache-nix-action@v6
+          persist-credentials: false
+      - uses: nixbuild/nix-quick-install-action@9f63be77f412a248c9d9a65a4c82cf066cdf8f0c # v35
+      - uses: nix-community/cache-nix-action@7df957e333c1e5da7721f60227dbba6d06080569 # v7.0.2
         with:
           primary-key: nix-${{ runner.arch }}-${{ hashFiles('**/flake.*') }}
       - name: Download build-plan artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: ${{ inputs.artifact_prefix }}build-plan
           path: ./builder/
@@ -151,28 +179,39 @@ jobs:
         env:
           BUNDLE_WITHOUT: "development"
       - name: Build Emacs
-        run: >-
-          nix develop
-          --command ./build-emacs-for-macos
-          --log-level debug
-          --plan build-plan.yml
-          --native-full-aot
-          --no-self-sign
-          --icon-uri 'https://github.com/jimeh/emacs-liquid-glass-icons/releases/download/v1.0.1/EmacsLG1-Default.icns'
-          --tahoe-icon-uri 'https://github.com/jimeh/emacs-liquid-glass-icons/releases/download/v1.0.1/Assets.car'
-          --tahoe-icon-name EmacsLG1
-          ${{ inputs.build_args }}
+        run: |
+          args=()
+
+          if [ -n "$BUILD_ARGS" ]; then
+            read -r -a args <<< "$BUILD_ARGS"
+          fi
+
+          nix develop \
+            --command ./build-emacs-for-macos \
+            --log-level debug \
+            --plan build-plan.yml \
+            --native-full-aot \
+            --no-self-sign \
+            --icon-uri "$ICON_URI" \
+            --tahoe-icon-uri "$TAHOE_ICON_URI" \
+            --tahoe-icon-name EmacsLG1 \
+            "${args[@]}"
         working-directory: builder
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BUILD_ARGS: ${{ inputs.build_args }}
+          GITHUB_TOKEN: ${{ github.token }}
+          ICON_URI: >-
+            https://github.com/jimeh/emacs-liquid-glass-icons/releases/download/v1.0.1/EmacsLG1-Default.icns
+          TAHOE_ICON_URI: >-
+            https://github.com/jimeh/emacs-liquid-glass-icons/releases/download/v1.0.1/Assets.car
       - name: Upload unsigned app artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ inputs.artifact_prefix }}unsigned-app
           path: builds/*.tbz
           if-no-files-found: error
       - name: Upload Emacs source artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ inputs.artifact_prefix }}emacs-source
           path: builder/tarballs/*.tgz
@@ -180,33 +219,35 @@ jobs:
   package:
     runs-on: ${{ inputs.os }}
     needs: [plan, build]
+    outputs:
+      package_created: ${{ steps.package_created.outputs.package_created }}
     steps:
       - name: Download pre-built emacs-builder artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: emacs-builder-${{ runner.arch }}
           path: bin
       - name: Ensure emacs-builder is executable
         run: chmod +x bin/emacs-builder
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: "3.11"
       - name: Install dmgbuild
         run: |
           $(command -v pip3 || command -v pip) install --upgrade dmgbuild
       - name: Download build-plan artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: ${{ inputs.artifact_prefix }}build-plan
           path: ./
       - name: Download unsigned app artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: ${{ inputs.artifact_prefix }}unsigned-app
           path: builds
       - name: Extract unsigned app archive
         run: |
-          find * -name '*.tbz' -exec tar xvjf "{}" \;
+          find . -name '*.tbz' -exec tar xvjf "{}" \;
         working-directory: builds
       - name: Install the Apple signing certificate
         run: |
@@ -268,13 +309,16 @@ jobs:
           AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
           AC_PROVIDER: ${{ secrets.AC_PROVIDER }}
       - name: Upload disk image artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ inputs.artifact_prefix }}dmg
           path: |
             builds/*.dmg
             builds/*.sha*
           if-no-files-found: error
+      - name: Set package created output
+        id: package_created
+        run: echo "package_created=true" >> "$GITHUB_OUTPUT"
       - name: Clean up keychain used for signing certificate
         if: always()
         run: |
