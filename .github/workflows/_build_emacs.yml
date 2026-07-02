@@ -221,15 +221,44 @@ jobs:
           security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
           security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security default-keychain -s "$KEYCHAIN_PATH"
 
           # import certificate to keychain
           security import "$CERTIFICATE_PATH" -P "$CERT_PASSWORD" -A \
             -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
-          security list-keychain -d user -s "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: \
+            -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security list-keychains -d user -s "$KEYCHAIN_PATH"
+
+          # discover the imported Developer ID Application identity
+          if [ -z "$AC_PROVIDER" ]; then
+            echo "AC_PROVIDER is required for signing identity discovery" >&2
+            exit 1
+          fi
+
+          SIGN_IDENTITY="$(
+            security find-identity -v -p codesigning "$KEYCHAIN_PATH" |
+              awk -v team="($AC_PROVIDER)" '
+                /Developer ID Application/ && index($0, team) {
+                  print $2
+                  exit
+                }
+              '
+          )"
+
+          if [ -z "$SIGN_IDENTITY" ]; then
+            echo "No Developer ID Application identity found in keychain" >&2
+            security find-identity -v -p codesigning "$KEYCHAIN_PATH"
+            exit 1
+          fi
+
+          echo "AC_SIGN_IDENTITY=$SIGN_IDENTITY" >> "$GITHUB_ENV"
+          echo "Discovered signing identity: ${SIGN_IDENTITY:0:8}..."
         env:
           CERT_BASE64: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_P12_BASE64 }}
           CERT_PASSWORD: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_PASSWORD }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+          AC_PROVIDER: ${{ secrets.AC_PROVIDER }}
       - name: Sign, package and notarize build
         run: >-
           bin/emacs-builder package -v --plan build-plan.yml
@@ -238,7 +267,6 @@ jobs:
           AC_USERNAME: ${{ secrets.AC_USERNAME }}
           AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
           AC_PROVIDER: ${{ secrets.AC_PROVIDER }}
-          AC_SIGN_IDENTITY: ${{ secrets.AC_SIGN_IDENTITY }}
       - name: Upload disk image artifacts
         uses: actions/upload-artifact@v4
         with:
