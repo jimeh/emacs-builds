@@ -30,14 +30,13 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
       - name: commit and push changes to meta branch
         run: |
-          if git diff --quiet; then
-            echo "No metadata changes to commit."
-            exit 0
-          fi
-
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add total-downloads/shield.json total-downloads/.cache.json
+          if git diff --cached --quiet; then
+            echo "No metadata changes to commit."
+            exit 0
+          fi
           git commit -m "chore(meta): update metadata files"
           git push "$AUTHENTICATED_REMOTE" HEAD:meta
         env:
