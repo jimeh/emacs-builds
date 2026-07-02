@@ -1,0 +1,7 @@
+pre-commit:
+  jobs:
+    - name: check GitHub Actions workflows
+      glob:
+        - ".github/workflows/*.yml"
+        - ".github/workflows/*.yaml"
+      run: mise run check:workflows
