@@ -12,6 +12,7 @@ content.
 - Run `mise run pin:actions` after changing `uses:` references.
 - Run `mise run pin:actions:audit` with `GITHUB_TOKEN` set to verify the
   configured minimum action release age.
+- Run `mise lock` after changing mise tool constraints.
 - `pinact` is configured with a 3-day minimum release age in `.pinact.yaml`.
 
 ## Workflow Constraints

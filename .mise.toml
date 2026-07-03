@@ -1,16 +1,17 @@
 [settings]
+lockfile = true
 minimum_release_age = "3d"
 
 [tools]
-actionlint = "1.7.12"
-lefthook = "2.1.9"
-pinact = "4.1.0"
-zizmor = "1.26.1"
+actionlint = "1"
+lefthook = "2"
+pinact = "4"
+zizmor = "1"
 
 [tasks.setup]
 description = "Install tools and local git hooks"
 run = [
-  "mise install",
+  "mise install --locked",
   "lefthook install",
 ]
 
