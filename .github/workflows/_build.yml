@@ -44,11 +44,31 @@ on:
         required: false
         default: true
         type: boolean
+    secrets:
+      AC_PASSWORD:
+        required: true
+      AC_PROVIDER:
+        required: true
+      AC_USERNAME:
+        required: true
+      APPLE_DEVELOPER_CERTIFICATE_P12_BASE64:
+        required: true
+      APPLE_DEVELOPER_CERTIFICATE_PASSWORD:
+        required: true
+      KEYCHAIN_PASSWORD:
+        required: true
+      TAP_REPO_TOKEN:
+        required: true
+
+permissions:
+  contents: read
 
 jobs:
   prepare:
     name: Prepare
     uses: ./.github/workflows/_prepare.yml
+    permissions:
+      contents: read
     with:
       builder_ref: ${{ inputs.builder_ref }}
 
@@ -60,6 +80,8 @@ jobs:
     name: Build (x86_64)
     if: inputs.x86_64
     uses: ./.github/workflows/_build_emacs.yml
+    permissions:
+      contents: read
     needs: [prepare]
     with:
       builder_ref: ${{ needs.prepare.outputs.builder_sha }}
@@ -72,11 +94,21 @@ jobs:
       build_variant: ${{ inputs.build_variant }}
       test_build_name: ${{ inputs.test_build_name }}
       test_release_type: ${{ inputs.test_release_type }}
-    secrets: inherit
+    secrets:
+      AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+      AC_PROVIDER: ${{ secrets.AC_PROVIDER }}
+      AC_USERNAME: ${{ secrets.AC_USERNAME }}
+      APPLE_DEVELOPER_CERTIFICATE_P12_BASE64: >-
+        ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_P12_BASE64 }}
+      APPLE_DEVELOPER_CERTIFICATE_PASSWORD: >-
+        ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_PASSWORD }}
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
 
   release_x86_64:
     name: Release (x86_64)
     uses: ./.github/workflows/_release.yml
+    permissions:
+      contents: write
     # Depend on both build_x86_64 and build_arm64, but only run if build_x86_64
     # was successful and a package was created. This ensure wait for all builds
     # to complete before running any release jobs.
@@ -100,6 +132,8 @@ jobs:
     name: Build (arm64)
     if: inputs.arm64
     uses: ./.github/workflows/_build_emacs.yml
+    permissions:
+      contents: read
     needs: [prepare]
     with:
       builder_ref: ${{ needs.prepare.outputs.builder_sha }}
@@ -112,11 +146,21 @@ jobs:
       build_variant: ${{ inputs.build_variant }}
       test_build_name: ${{ inputs.test_build_name }}
       test_release_type: ${{ inputs.test_release_type }}
-    secrets: inherit
+    secrets:
+      AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+      AC_PROVIDER: ${{ secrets.AC_PROVIDER }}
+      AC_USERNAME: ${{ secrets.AC_USERNAME }}
+      APPLE_DEVELOPER_CERTIFICATE_P12_BASE64: >-
+        ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_P12_BASE64 }}
+      APPLE_DEVELOPER_CERTIFICATE_PASSWORD: >-
+        ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_PASSWORD }}
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
 
   release_arm64:
     name: Release (arm64)
     uses: ./.github/workflows/_release.yml
+    permissions:
+      contents: write
     # Depend on both build_arm64 and build_x86_64, but only run if build_arm64
     # was successful and a package was created. This ensure wait for all builds
     # to complete before running any release jobs.
@@ -139,6 +183,7 @@ jobs:
   update_casks:
     name: Update Casks
     uses: ./.github/workflows/_update-casks.yml
+    permissions: {}
     # Depend on both release jobs, but only run if either of them was
     # successful. This ensures we only run this job once all release jobs have
     # been completed.
@@ -148,4 +193,5 @@ jobs:
       inputs.test_build_name == '' &&
       contains(needs.*.result, 'success') &&
       !contains(needs.*.result, 'failure')
-    secrets: inherit
+    secrets:
+      TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}

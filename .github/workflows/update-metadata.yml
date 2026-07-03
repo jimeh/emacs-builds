@@ -6,15 +6,19 @@ on:
     - cron: "0 0 * * *"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   update-metadata:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout meta branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           ref: meta
-      - uses: actions/setup-go@v5
+          persist-credentials: false
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
         with:
           go-version: "1.23"
       - name: update total downloads shield JSON
@@ -25,11 +29,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: commit and push changes to meta branch
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "chore(meta): update metadata files"
-          commit_user_name: github-actions[bot]
-          commit_user_email: github-actions[bot]@users.noreply.github.com
-          commit_author: >-
-            github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-          skip_dirty_check: false
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add total-downloads/shield.json total-downloads/.cache.json
+          if git diff --cached --quiet; then
+            echo "No metadata changes to commit."
+            exit 0
+          fi
+          git commit -m "chore(meta): update metadata files"
+          git push "$AUTHENTICATED_REMOTE" HEAD:meta
+        env:
+          AUTHENTICATED_REMOTE: >-
+            https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
