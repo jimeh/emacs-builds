@@ -7,7 +7,7 @@ content.
 
 ## Validation
 
-- Run `mise run setup` once after checkout to install tools and local hooks.
+- Run `mise run setup` once after checkout to install local hooks.
 - Run `mise run check` before handing off workflow changes.
 - Run `mise run pin:actions` after changing `uses:` references.
 - Run `mise run pin:actions:audit` with `GITHUB_TOKEN` set to verify the

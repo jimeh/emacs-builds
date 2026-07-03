@@ -1,6 +1,7 @@
 [settings]
 lockfile = true
 minimum_release_age = "3d"
+task.run_auto_install = true
 
 [tools]
 actionlint = "1"
@@ -9,11 +10,8 @@ pinact = "4"
 zizmor = "1"
 
 [tasks.setup]
-description = "Install tools and local git hooks"
-run = [
-  "mise install --locked",
-  "lefthook install",
-]
+description = "Install local git hooks"
+run = "lefthook install"
 
 [tasks.check]
 description = "Run fast local checks"
