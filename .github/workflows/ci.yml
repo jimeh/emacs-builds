@@ -4,14 +4,14 @@ on:
   pull_request:
     paths:
       - ".github/workflows/**"
-      - ".mise.toml"
+      - "mise.toml"
       - ".pinact.yaml"
   push:
     branches:
       - main
     paths:
       - ".github/workflows/**"
-      - ".mise.toml"
+      - "mise.toml"
       - ".pinact.yaml"
   workflow_dispatch:
 
