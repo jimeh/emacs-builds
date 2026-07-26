@@ -6329,6 +6329,10 @@
       "Emacs.2026-07-23.21c979e.master.macOS-11.arm64.dmg": 9,
       "Emacs.2026-07-23.21c979e.master.macOS-11.x86_64.dmg": 1
     },
+    "Emacs.2026-07-24.ba331c2.master": {
+      "Emacs.2026-07-24.ba331c2.master.macOS-11.arm64.dmg": 8,
+      "Emacs.2026-07-24.ba331c2.master.macOS-11.x86_64.dmg": 1
+    },
     "Test Builds (30-2-deps-upgrade)": {
       "Emacs.2025-08-14.636f166.emacs-30-2.macOS-11.arm64.test.30-2-deps-upgrade.dmg": 20,
       "Emacs.2025-08-14.636f166.emacs-30-2.macOS-11.x86_64.test.30-2-deps-upgrade.dmg": 6
