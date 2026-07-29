@@ -93,7 +93,7 @@
     },
     "Emacs-30.2-1": {
       "Emacs.2025-08-14.636f166.emacs-30-2-1.macOS-11.arm64.dmg": 1501,
-      "Emacs.2025-08-14.636f166.emacs-30-2-1.macOS-11.x86_64.dmg": 214
+      "Emacs.2025-08-14.636f166.emacs-30-2-1.macOS-11.x86_64.dmg": 215
     },
     "Emacs-31.0.90-pretest": {
       "Emacs.2026-06-05.0ee48ac.emacs-31-0-90-pretest.macOS-11.arm64.dmg": 15,
@@ -6340,6 +6340,10 @@
     "Emacs.2026-07-26.810e9d6.master": {
       "Emacs.2026-07-26.810e9d6.master.macOS-11.arm64.dmg": 7,
       "Emacs.2026-07-26.810e9d6.master.macOS-11.x86_64.dmg": 1
+    },
+    "Emacs.2026-07-27.75441af.master": {
+      "Emacs.2026-07-27.75441af.master.macOS-11.arm64.dmg": 5,
+      "Emacs.2026-07-27.75441af.master.macOS-11.x86_64.dmg": 1
     },
     "Test Builds (30-2-deps-upgrade)": {
       "Emacs.2025-08-14.636f166.emacs-30-2.macOS-11.arm64.test.30-2-deps-upgrade.dmg": 20,
