@@ -104,7 +104,7 @@
       "Emacs.2026-07-23.57581b8.emacs-31-0-91-pretest.macOS-11.x86_64.dmg": 5
     },
     "Emacs-31.1": {
-      "Emacs.2026-08-24.a360712.emacs-31-1.macOS-11.arm64.dmg": 226,
+      "Emacs.2026-08-24.a360712.emacs-31-1.macOS-11.arm64.dmg": 235,
       "Emacs.2026-08-24.a360712.emacs-31-1.macOS-11.x86_64.dmg": 21
     },
     "Emacs.2021-05-08.bb8b8d7.master": {
@@ -2379,22 +2379,22 @@
       "Emacs.2023-01-28.835d2b6.master.macOS-11.x86_64.dmg": 12
     },
     "Emacs.2023-01-29.254c75f.master": {
-      "Emacs.2023-01-29.254c75f.master.macOS-11.x86_64.dmg": 20
+      "Emacs.2023-01-29.254c75f.master.macOS-11.x86_64.dmg": 21
     },
     "Emacs.2023-01-29.9058601.emacs-29": {
-      "Emacs.2023-01-29.9058601.emacs-29.macOS-11.x86_64.dmg": 16
+      "Emacs.2023-01-29.9058601.emacs-29.macOS-11.x86_64.dmg": 17
     },
     "Emacs.2023-01-30.1684e25.emacs-29": {
-      "Emacs.2023-01-30.1684e25.emacs-29.macOS-11.x86_64.dmg": 9
+      "Emacs.2023-01-30.1684e25.emacs-29.macOS-11.x86_64.dmg": 10
     },
     "Emacs.2023-01-30.e19b91f.master": {
-      "Emacs.2023-01-30.e19b91f.master.macOS-11.x86_64.dmg": 16
+      "Emacs.2023-01-30.e19b91f.master.macOS-11.x86_64.dmg": 17
     },
     "Emacs.2023-01-31.47ab9ba.emacs-29": {
-      "Emacs.2023-01-31.47ab9ba.emacs-29.macOS-11.x86_64.dmg": 14
+      "Emacs.2023-01-31.47ab9ba.emacs-29.macOS-11.x86_64.dmg": 15
     },
     "Emacs.2023-01-31.a73b046.master": {
-      "Emacs.2023-01-31.a73b046.master.macOS-11.x86_64.dmg": 10
+      "Emacs.2023-01-31.a73b046.master.macOS-11.x86_64.dmg": 11
     },
     "Emacs.2023-02-01.c831f55.master": {
       "Emacs.2023-02-01.c831f55.master.macOS-11.x86_64.dmg": 12
@@ -6532,7 +6532,7 @@
       "Emacs.2026-09-21.2b1f41e.master.macOS-11.x86_64.dmg": 1
     },
     "Emacs.2026-09-22.1395752.master": {
-      "Emacs.2026-09-22.1395752.master.macOS-11.arm64.dmg": 1,
+      "Emacs.2026-09-22.1395752.master.macOS-11.arm64.dmg": 8,
       "Emacs.2026-09-22.1395752.master.macOS-11.x86_64.dmg": 1
     },
     "Test Builds (30-2-deps-upgrade)": {
