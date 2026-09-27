@@ -104,7 +104,7 @@
       "Emacs.2026-07-23.57581b8.emacs-31-0-91-pretest.macOS-11.x86_64.dmg": 5
     },
     "Emacs-31.1": {
-      "Emacs.2026-08-24.a360712.emacs-31-1.macOS-11.arm64.dmg": 240,
+      "Emacs.2026-08-24.a360712.emacs-31-1.macOS-11.arm64.dmg": 249,
       "Emacs.2026-08-24.a360712.emacs-31-1.macOS-11.x86_64.dmg": 23
     },
     "Emacs.2021-05-08.bb8b8d7.master": {
@@ -2451,19 +2451,19 @@
       "Emacs.2023-02-09.d6d25a3.master.macOS-11.x86_64.dmg": 10
     },
     "Emacs.2023-02-10.4f053af.emacs-29": {
-      "Emacs.2023-02-10.4f053af.emacs-29.macOS-11.x86_64.dmg": 9
+      "Emacs.2023-02-10.4f053af.emacs-29.macOS-11.x86_64.dmg": 10
     },
     "Emacs.2023-02-10.67dea81.master": {
-      "Emacs.2023-02-10.67dea81.master.macOS-11.x86_64.dmg": 12
+      "Emacs.2023-02-10.67dea81.master.macOS-11.x86_64.dmg": 13
     },
     "Emacs.2023-02-11.074008e.emacs-29": {
-      "Emacs.2023-02-11.074008e.emacs-29.macOS-11.x86_64.dmg": 17
+      "Emacs.2023-02-11.074008e.emacs-29.macOS-11.x86_64.dmg": 18
     },
     "Emacs.2023-02-11.14c97db.master": {
-      "Emacs.2023-02-11.14c97db.master.macOS-11.x86_64.dmg": 12
+      "Emacs.2023-02-11.14c97db.master.macOS-11.x86_64.dmg": 13
     },
     "Emacs.2023-02-12.e0b6012.master": {
-      "Emacs.2023-02-12.e0b6012.master.macOS-11.x86_64.dmg": 16
+      "Emacs.2023-02-12.e0b6012.master.macOS-11.x86_64.dmg": 17
     },
     "Emacs.2023-02-13.4bb27a5.emacs-29": {
       "Emacs.2023-02-13.4bb27a5.emacs-29.macOS-11.x86_64.dmg": 21
@@ -6540,7 +6540,12 @@
       "Emacs.2026-09-24.daa1fc8.master.macOS-11.x86_64.dmg": 1
     },
     "Emacs.2026-09-25.be34fc9.master": {
+      "Emacs.2026-09-25.be34fc9.master.macOS-11.arm64.dmg": 4,
       "Emacs.2026-09-25.be34fc9.master.macOS-11.x86_64.dmg": 1
+    },
+    "Emacs.2026-09-26.8f784f2.master": {
+      "Emacs.2026-09-26.8f784f2.master.macOS-11.arm64.dmg": 2,
+      "Emacs.2026-09-26.8f784f2.master.macOS-11.x86_64.dmg": 1
     },
     "Test Builds (30-2-deps-upgrade)": {
       "Emacs.2025-08-14.636f166.emacs-30-2.macOS-11.arm64.test.30-2-deps-upgrade.dmg": 20,
