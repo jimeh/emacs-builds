@@ -104,7 +104,7 @@
       "Emacs.2026-07-23.57581b8.emacs-31-0-91-pretest.macOS-11.x86_64.dmg": 5
     },
     "Emacs-31.1": {
-      "Emacs.2026-08-24.a360712.emacs-31-1.macOS-11.arm64.dmg": 272,
+      "Emacs.2026-08-24.a360712.emacs-31-1.macOS-11.arm64.dmg": 280,
       "Emacs.2026-08-24.a360712.emacs-31-1.macOS-11.x86_64.dmg": 26
     },
     "Emacs.2021-05-08.bb8b8d7.master": {
@@ -2547,16 +2547,16 @@
       "Emacs.2023-03-01.59365f9.emacs-29.macOS-11.x86_64.dmg": 16
     },
     "Emacs.2023-03-03.7f740b8.master": {
-      "Emacs.2023-03-03.7f740b8.master.macOS-11.x86_64.dmg": 16
+      "Emacs.2023-03-03.7f740b8.master.macOS-11.x86_64.dmg": 17
     },
     "Emacs.2023-03-03.da8e4b6.emacs-29": {
-      "Emacs.2023-03-03.da8e4b6.emacs-29.macOS-11.x86_64.dmg": 18
+      "Emacs.2023-03-03.da8e4b6.emacs-29.macOS-11.x86_64.dmg": 19
     },
     "Emacs.2023-03-04.4b3ccf3.master": {
       "Emacs.2023-03-04.4b3ccf3.master.macOS-11.x86_64.dmg": 6
     },
     "Emacs.2023-03-05.6fb8a4d.master": {
-      "Emacs.2023-03-05.6fb8a4d.master.macOS-11.x86_64.dmg": 13
+      "Emacs.2023-03-05.6fb8a4d.master.macOS-11.x86_64.dmg": 14
     },
     "Emacs.2023-03-07.4e8b50e.master": {
       "Emacs.2023-03-07.4e8b50e.master.macOS-11.x86_64.dmg": 11
@@ -6560,11 +6560,15 @@
       "Emacs.2026-09-29.21c3093.master.macOS-11.x86_64.dmg": 1
     },
     "Emacs.2026-09-30.f78ab3b.master": {
-      "Emacs.2026-09-30.f78ab3b.master.macOS-11.arm64.dmg": 4
+      "Emacs.2026-09-30.f78ab3b.master.macOS-11.arm64.dmg": 5
     },
     "Emacs.2026-10-01.8899f65.master": {
-      "Emacs.2026-10-01.8899f65.master.macOS-11.arm64.dmg": 1,
+      "Emacs.2026-10-01.8899f65.master.macOS-11.arm64.dmg": 8,
       "Emacs.2026-10-01.8899f65.master.macOS-11.x86_64.dmg": 1
+    },
+    "Emacs.2026-10-02.7586a71.master": {
+      "Emacs.2026-10-02.7586a71.master.macOS-11.arm64.dmg": 1,
+      "Emacs.2026-10-02.7586a71.master.macOS-11.x86_64.dmg": 1
     },
     "Test Builds (30-2-deps-upgrade)": {
       "Emacs.2025-08-14.636f166.emacs-30-2.macOS-11.arm64.test.30-2-deps-upgrade.dmg": 20,
