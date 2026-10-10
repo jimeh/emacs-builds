@@ -100,11 +100,11 @@
       "Emacs.2026-06-05.0ee48ac.emacs-31-0-90-pretest.macOS-11.x86_64.dmg": 4
     },
     "Emacs-31.0.91-pretest": {
-      "Emacs.2026-07-23.57581b8.emacs-31-0-91-pretest.macOS-11.arm64.dmg": 20,
+      "Emacs.2026-07-23.57581b8.emacs-31-0-91-pretest.macOS-11.arm64.dmg": 21,
       "Emacs.2026-07-23.57581b8.emacs-31-0-91-pretest.macOS-11.x86_64.dmg": 5
     },
     "Emacs-31.1": {
-      "Emacs.2026-08-24.a360712.emacs-31-1.macOS-11.arm64.dmg": 304,
+      "Emacs.2026-08-24.a360712.emacs-31-1.macOS-11.arm64.dmg": 308,
       "Emacs.2026-08-24.a360712.emacs-31-1.macOS-11.x86_64.dmg": 30
     },
     "Emacs.2021-05-08.bb8b8d7.master": {
@@ -2637,10 +2637,10 @@
       "Emacs.2023-03-27.edc460e.emacs-29.macOS-11.x86_64.dmg": 19
     },
     "Emacs.2023-03-28.a8c9283.emacs-29": {
-      "Emacs.2023-03-28.a8c9283.emacs-29.macOS-11.x86_64.dmg": 18
+      "Emacs.2023-03-28.a8c9283.emacs-29.macOS-11.x86_64.dmg": 19
     },
     "Emacs.2023-03-29.ab42730.emacs-29": {
-      "Emacs.2023-03-29.ab42730.emacs-29.macOS-11.x86_64.dmg": 9
+      "Emacs.2023-03-29.ab42730.emacs-29.macOS-11.x86_64.dmg": 10
     },
     "Emacs.2023-03-30.59f66ea.emacs-29": {
       "Emacs.2023-03-30.59f66ea.emacs-29.macOS-11.x86_64.dmg": 12
@@ -6576,6 +6576,14 @@
     },
     "Emacs.2026-10-08.6d14004.master": {
       "Emacs.2026-10-08.6d14004.master.macOS-11.arm64.dmg": 4
+    },
+    "Emacs.2026-10-09.4685782.master": {
+      "Emacs.2026-10-09.4685782.master.macOS-11.arm64.dmg": 7,
+      "Emacs.2026-10-09.4685782.master.macOS-11.x86_64.dmg": 1
+    },
+    "Emacs.2026-10-09.871e4cc.master": {
+      "Emacs.2026-10-09.871e4cc.master.macOS-11.arm64.dmg": 1,
+      "Emacs.2026-10-09.871e4cc.master.macOS-11.x86_64.dmg": 1
     },
     "Test Builds (30-2-deps-upgrade)": {
       "Emacs.2025-08-14.636f166.emacs-30-2.macOS-11.arm64.test.30-2-deps-upgrade.dmg": 20,
