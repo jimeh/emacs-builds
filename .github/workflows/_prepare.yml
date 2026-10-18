@@ -29,7 +29,7 @@ jobs:
       - name: Default git ref check
         id: ref
         run: |
-          DEFAULT_BUILDER_REF="v0.6.63"
+          DEFAULT_BUILDER_REF="v0.6.65"
           BUILDER_REF="$BUILDER_REF_INPUT"
           echo "ref=${BUILDER_REF:-$DEFAULT_BUILDER_REF}" >> "$GITHUB_OUTPUT"
         env:
